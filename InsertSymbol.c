@@ -1,16 +1,16 @@
 #include "headers.h"
 
-void InsertSymbol(SymbolList table, char Name[7], int Addrm, int LineNum){
+void InsertSymbol(SymbolList table, char Name[7], int Addr, int LineNum){
 
-Symbol new;
+struct Symbol *new;
 
-new = malloc(sizeof(Symbol));
-	memset(new, '\0', sizeof(Symbol);
+new = malloc(sizeof(struct Symbol));
+	memset(new, '\0', sizeof(struct Symbol));
 
 new -> Address = Addr;
 new -> LineNumber = LineNum;
 strcpy(new -> Name, Name);
 new -> Next = table;
-table = &new
+table = new;
 
 }

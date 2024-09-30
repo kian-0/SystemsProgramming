@@ -1,8 +1,8 @@
-Project 1
+# Project 1
 
-Due September 22, 2024 at 1159PM EST.
+~~Due September 22, 2024 at 1159PM EST.~~
 
-Due October 1, 2024 at 600PM EST.
+~~Due October 1, 2024 at 600PM EST.~~
 
 Due October 4, 2024 at 11:59 PM EST.
 
@@ -18,14 +18,14 @@ For example: if an error is found with the input assembly file, you should stop 
 
 ASSEMBLY ERROR:
 
-<The contents of the source line of assembly which contains the error><CrLf>
+(The contents of the source line of assembly which contains the error>(CrLf>
 
-Line <line #> <Description of Error Encountered><CrLf>
+Line (line #> (Description of Error Encountered>(CrLf>
 
-If the SIC assembly file is valid, then Project 1 should output, its symbol table. For each symbol, there should be one line of output: the symbol name followed by a <tab> character, the hexadecimal address of the symbol, and a <CrLf>.
+If the SIC assembly file is valid, then Project 1 should output, its symbol table. For each symbol, there should be one line of output: the symbol name followed by a (tab> character, the hexadecimal address of the symbol, and a (CrLf>.
 
------ Example ---- 
-
+### ----- Example ---- 
+```
 COPY	START	1000
 FIRST	STL	RETADR
 CLOOP	JSUB	RDREC
@@ -71,8 +71,10 @@ WLOOP	TD	OUTPUT
 	RSUB
 OUTPUT	BYTE	X'05'
 	END	FIRST
-The correct output for this input file would be:
+```
 
+### The correct output for this input file would be:
+```
 COPY   1000
 
 FIRST 1000
@@ -109,7 +111,7 @@ WLOOP 2064
 
 OUTPUT 2079
 
- 
+```
 
 I will build your project by typing make.  I will then run your project by typing project1 <filename>
 

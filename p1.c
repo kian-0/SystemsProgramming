@@ -6,11 +6,14 @@
  */
 #include "headers.h"
 
+#define DEBUG
+
 int main(int argc, char *argv[]) {
     //Starts up file
     FILE *file;
     char line[1024];
     char *token;
+    int linepos = 0;
 
     if (argc != 2) {
         printf("Usage: %s <filename>. - where file name is a SIC Assembly file\n", argv[0]);
@@ -25,17 +28,18 @@ int main(int argc, char *argv[]) {
     }
 
     while (fgets(line, 1024, file) != NULL) {
+        linepos++;
 
         printf("Reading: %s", line);
 
         if (line[0] == 35)
         {
-            printf("Comment line - Skipping\n");
+            printf("%d Comment line - Skipping\n", linepos);
             continue;
         } // end comment if
         
         if(strlen(line) <= 2) {
-            printf("Error: Empty line\n");
+            printf("Error: Empty line%d\n", linepos);
             fclose(file);
             return 0;
         }//end strlen if

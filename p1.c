@@ -6,6 +6,8 @@
  */
 #include "headers.h"
 
+#define DEBUG
+
 int main(int argc, char *argv[]) {
     //Starts up file
     FILE *file;
@@ -13,7 +15,8 @@ int main(int argc, char *argv[]) {
     char symbol[32];
     char opcode[32];
     char operand[32];
-    
+        int linepos = 0;
+
     if (argc != 2) {
         printf("Usage: %s <filename>. - where file name is a SIC Assembly file\n", argv[0]);
         return 0;
@@ -27,19 +30,20 @@ int main(int argc, char *argv[]) {
     }
 
     while (fgets(line, 1024, file) != NULL) {
+        linepos++;
 
         printf("Reading: %s", line);
 
         //Checks beginning of line for # (a comment)
         if (line[0] == 35)
         {
-            printf("Comment line - Skipping\n");
+            printf("%d Comment line - Skipping\n", linepos);
             continue;
         } // end comment if
         
         //Checks to see if it is an empty line and ends the program
         if(strlen(line) <= 2) {
-            printf("Error: Empty line\n");
+            printf("Error: Empty line%d\n", linepos);
             fclose(file);
             return 0;
         }//end strlen if

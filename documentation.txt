@@ -14,7 +14,9 @@ Added:
     char symbol[7];
     char opcode[32];
     char operand[32];
-    int linepos = 0;
+    int lineNum = 0;
+    int address = 0;
+    SymbolList table = {NULL};
 and
 Replaced:
         while (token - strtok(line, " ")) {
@@ -33,5 +35,9 @@ Added:
 int IsInSymbolTable(SymbolList table, char Test[7]);
 void InsertSymbol(SymbolList table, char Name[7], int Addr, int LineNum);
 
-I had an issue where the symbols were not being entered in the table.
-I tried to make the table for InsertSymbol a pointer
+I had an issue where InsertSymbols was not inserting anything.
+The compiler was mentioning about incompatible typing.
+Had to make the SymbolList table a pointer: *table in the function
+and &table in p1.c
+
+It then worked after than but worked like a stack so had to modify it so that would act like a queue instead.

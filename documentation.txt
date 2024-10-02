@@ -1,5 +1,10 @@
 Copied all the code we did in class from rewatching recordings
 
+I found it difficult and unreliable to code directly on the UNF servers
+So I took the time and some stuff I learned at my current internship to set up
+a github and Windows Subsystem for Linux running on VSC using Ubuntu as a terminal
+and compiler.
+
 I could not follow or understand 100% how the tokenizer workd
 I found sscanf which can split the line into certain variables based on formatting
 It has issues of its own as i discovered but tried mitigating
@@ -17,7 +22,6 @@ Replaced:
             token = strtok(NULL, " \t\n");
         }
 with if isalpha block
-
 Added:
     memset(symbol, '\0', sizeof(symbol));
     memset(opcode, '\0', sizeof(opcode));
@@ -26,6 +30,8 @@ Because noticed that lines dont have the pertaining info it would display the pr
 
 In headers.h
 Added: 
-void IsInSymbolList(SymbolList table, char Test[7]);
-void InsertSymbolList(SymbolList table, char Name[7], int Addr, int LineNum);
-Just in case they were necessary like PrintSymbolTable
+int IsInSymbolTable(SymbolList table, char Test[7]);
+void InsertSymbol(SymbolList table, char Name[7], int Addr, int LineNum);
+
+I had an issue where the symbols were not being entered in the table.
+I tried to make the table for InsertSymbol a pointer

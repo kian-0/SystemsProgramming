@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
     char operand[32];
     int lineNum = 0;
     int address = 0;
+    int numByte = 0;
     SymbolList table = {NULL};
 
     // Checks if there is the correct amount of arguments
@@ -48,7 +49,7 @@ int main(int argc, char *argv[])
         // Checks beginning of line for # (a comment)
         if (line[0] == 35)
         {
-            printf("Line %d Comment line - Skipping\n", lineNum);
+            // printf("Line %d Comment line - Skipping\n", lineNum);
             continue;
         } // end comment if
 
@@ -64,23 +65,66 @@ int main(int argc, char *argv[])
         if (isalpha(line[0]) != 0)
         { // If there is a symbol
             sscanf(line, "%s %s %s", symbol, opcode, operand);
-
             // printf("Symbol:%s\nOpcode:%s\nOperand:%s\n\n", symbol, opcode, operand);
 
-            // Checks to see if symbol is start
-            if (strcmp(opcode, "START") == 0)
+            // Checks if the symbol is not the same as a directive
+            if (strcmp(symbol, "START") == 0 || strcmp(symbol, "END") == 0 || strcmp(symbol, "BYTE") == 0 || strcmp(symbol, "WORD") == 0 || strcmp(symbol, "RESB") == 0 || strcmp(symbol, "RESW") == 0 || strcmp(symbol, "RESR") == 0 || strcmp(symbol, "EXPORTS") == 0)
+            {
+                printf("Line %d Symbol %s is not a valid name\n", lineNum, symbol);
+                return 0;
+            }
+
+            // Opcode Handler and symbol inserter
+            if (strcmp(opcode, "START") == 0) // Start of SIC
             {
                 sscanf(operand, "%x", &address);                // Sets the starting address
+                address -= 3;
                 InsertSymbol(&table, symbol, address, lineNum); // Inserts symbol
+            }
+            else if (strcmp(opcode, "RESW") == 0) // Reserve the indicated number of words for a data area.
+            { 
+                sscanf(operand, "%d", &numByte);
+                address += 3 * numByte; //3 Bytes per word 
+                printf("%x \n", address);
+            }
+            else if (strcmp(opcode, "RESB") == 0)
+            {
+                sscanf(operand, "%d", &numByte);
+                //address += numByte; // Reserves x bytes
+                printf("%x \n", address);
+                
+            }
+            else if (strcmp(opcode, "WORD") == 0)
+            {
+                address += 3;
+
+            }
+            else if (strcmp(opcode, "BYTE") == 0)
+            {
+                sscanf(operand, "%d", &numByte);
+                printf("%x \n", address);
+
+            }
+            else if (strcmp(opcode, "END") == 0)
+            {
+                return 0;
+
+            }
+            else
+            { // If there is no special cases/instructions it defaults and assumes it is a regular instruction
+                address += 3; // Advances addresses by 3
+
+            }
+
+            // Checks to see if it is in the symbol table
+            if (!IsInSymbolTable(table, symbol))
+            {
+                InsertSymbol(&table, symbol, address, lineNum);
             }
             else
             {
-                // Checks to see if it is in the symbol table
-                if (!IsInSymbolTable(table, symbol))
-                {
-                    InsertSymbol(&table, symbol, address, lineNum);
-                }
-                address += 3; // Advances addresses by 3
+                printf("Line %d Duplicate Symbol found '%s'\n", lineNum, symbol);
+                return 0;
             }
 
         } // end isalpha if

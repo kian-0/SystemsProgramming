@@ -1,6 +1,6 @@
 #include "headers.h"
 
-void InsertSymbol(SymbolList table, char Name[7], int Addr, int LineNum)
+void InsertSymbol(SymbolList *table, char Name[7], int Addr, int LineNum)
 {
 
 	struct Symbol *new;
@@ -11,6 +11,8 @@ void InsertSymbol(SymbolList table, char Name[7], int Addr, int LineNum)
 	new->Address = Addr;
 	new->LineNumber = LineNum;
 	strcpy(new->Name, Name);
-	new->Next = table;
-	table = new;
+	new->Next = *table;
+	*table = new;
+
+	printf("Symbol inserted: %s at address %x\n\n", Name, Addr);
 }

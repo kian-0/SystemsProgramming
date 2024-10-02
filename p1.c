@@ -6,8 +6,6 @@
  */
 #include "headers.h"
 
-#define DEBUG
-
 int main(int argc, char *argv[])
 {
     // Starts up file
@@ -17,12 +15,9 @@ int main(int argc, char *argv[])
     char symbol[7];
     char opcode[32];
     char operand[32];
-    int linepos = 0;
-    int address;
-    // Symbol starts
-    SYMBOL current;
-    SYMBOL prev;
-    SymbolList table;
+    int lineNum = 0;
+    int address = 0;
+    SymbolList table = {NULL};
 
     // Checks if there is the correct amount of arguments
     if (argc != 2)
@@ -43,22 +38,22 @@ int main(int argc, char *argv[])
     // Loops thru file and reads each line
     while (fgets(line, 1024, file) != NULL)
     {
-        linepos++;
+        lineNum++;
 
         // Displays read line
-        printf("%d Reading: %s", linepos, line);
+        printf("%d Reading: %s", lineNum, line);
 
         // Checks beginning of line for # (a comment)
         if (line[0] == 35)
         {
-            printf("%d Comment line - Skipping\n", linepos);
+            printf("%d Comment line - Skipping\n", lineNum);
             continue;
         } // end comment if
 
         // Checks to see if it is an empty line and ends the program
         if (strlen(line) <= 2)
         {
-            printf("Error: Empty line %d\n", linepos);
+            printf("Error: Empty line %d\n", lineNum);
             fclose(file);
             return 0;
         } // end strlen if
@@ -67,31 +62,30 @@ int main(int argc, char *argv[])
         if (isalpha(line[0]) != 0)
         { // If there is a symbol
             sscanf(line, "%s %s %s", symbol, opcode, operand);
-#ifdef DEBUG
+
             printf("Symbol:%s\nOpcode:%s\nOperand:%s\n\n", symbol, opcode, operand);
-#endif
+
             // Checks to see if symbol is start
-            if (strcmp(symbol, "START") == 0)
+            if (strcmp(opcode, "START") == 0)
             {
-                sscanf(operand, "%x", address); // Sets the starting address
-                SYMBOL current = {symbol, address, linepos, NULL};
-                table = &current;
-                prev = current;
+                sscanf(operand, "%x", &address);               // Sets the starting address
+                InsertSymbol(&table, symbol, address, lineNum); // Inserts symbol
             }
             else
             {
-                SYMBOL current = {symbol, address, linepos, NULL};
-                prev.Next = &current;
-                prev = current;
+                if (!IsInSymbolTable(table, symbol))
+                {
+                    InsertSymbol(&table, symbol, address, lineNum);
+                }
+                address += 3;
             }
 
         } // end isalpha if
         else
-        { // If there is no symbol+
+        { // If there is no symbols
             sscanf(line, "%s %s", opcode, operand);
-#ifdef DEBUG
             printf("Opcode:%s\nOperand:%s\n\n", opcode, operand);
-#endif
+            address += 3;
 
         } // end else
 

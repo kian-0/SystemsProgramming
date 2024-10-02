@@ -17,6 +17,6 @@ typedef struct Symbol *SymbolList;
 
 void PrintSymbolTable(SymbolList table);
 
-void IsInSymbolList(SymbolList table, char Test[7]);
+int IsInSymbolTable(SymbolList table, char Test[7]);
 
-void InsertSymbolList(SymbolList table, char Name[7], int Addr, int LineNum);
+void InsertSymbol(SymbolList *table, char Name[7], int Addr, int LineNum);

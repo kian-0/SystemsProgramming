@@ -2,21 +2,17 @@
 
 int IsInSymbolTable(SymbolList table, char Test[7])
 {
-
-    int Result;
-    SymbolList temp;
-    Result = 0;
+    SymbolList temp = table;
 
     while (temp != NULL)
     {
         if (!strcmp(temp->Name, Test))
         {
-            Result = 1; //Symbol found
-            printf("Symbol found");
-            break;
+            // printf("Symbol found\n");
+            return 1;
         }
         temp = temp->Next;
     }
 
-    return Result;
+    return 0;
 }

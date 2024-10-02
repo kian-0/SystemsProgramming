@@ -12,3 +12,6 @@ InsertSymbol.o: InsertSymbol.c headers.h
 
 IsInSymbolTable.o: IsInSymbolTable.c headers.h
 		gcc -c -g -Wall IsInSymbolTable.c
+
+DeleteList.o: DeleteList.c headers.c
+		gcc -c -g -Wall DeleteList.c

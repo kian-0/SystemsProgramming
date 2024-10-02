@@ -2,7 +2,6 @@
 
 void PrintSymbolTable(SymbolList table)
 {
-
     SymbolList temp;
     temp = table;
 
@@ -11,5 +10,4 @@ void PrintSymbolTable(SymbolList table)
         printf("%s\t%x\n", temp->Name, temp->Address);
         temp = temp->Next;
     }
-
 }

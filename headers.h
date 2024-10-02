@@ -1,18 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
-struct Symbol 
+struct Symbol
 {
     char Name[7];
     int Address;
     int LineNumber;
     struct Symbol *Next;
-
-} ;
+};
 
 typedef struct Symbol SYMBOL;
 
-typedef struct Symbol* SymbolList;
+typedef struct Symbol *SymbolList;
 
 void PrintSymbolTable(SymbolList table);
+
+void IsInSymbolList(SymbolList table, char Test[7]);
+
+void InsertSymbolList(SymbolList table, char Name[7], int Addr, int LineNum);

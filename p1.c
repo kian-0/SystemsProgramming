@@ -17,10 +17,12 @@ int main(int argc, char *argv[])
     char symbol[7];
     char opcode[32];
     char operand[32];
+    char hex[32];
+    char hexOrCon;
     int lineNum = 0;
     int address = 0;
     int numByte = 0;
-    SymbolList table = {NULL};
+    SymbolList table = NULL;
 
     // Checks if there is the correct amount of arguments
     if (argc != 2)
@@ -56,7 +58,7 @@ int main(int argc, char *argv[])
         // Checks to see if it is an empty line and ends the program
         if (strlen(line) <= 2)
         {
-            printf("Line %d Empty line\n", lineNum);
+            printf("Line %d Blank lines detected. Stopping\n", lineNum);
             fclose(file);
             return 0;
         } // end strlen if
@@ -70,61 +72,91 @@ int main(int argc, char *argv[])
             // Checks if the symbol is not the same as a directive
             if (strcmp(symbol, "START") == 0 || strcmp(symbol, "END") == 0 || strcmp(symbol, "BYTE") == 0 || strcmp(symbol, "WORD") == 0 || strcmp(symbol, "RESB") == 0 || strcmp(symbol, "RESW") == 0 || strcmp(symbol, "RESR") == 0 || strcmp(symbol, "EXPORTS") == 0)
             {
-                printf("Line %d Symbol %s is not a valid name\n", lineNum, symbol);
+                printf("Line %d Symbol %s is not a valid name. Stopping\n", lineNum, symbol);
+                return 0;
+            }
+
+            // Checks to see if it is in the symbol table
+            if (IsInSymbolTable(table, symbol))
+            {
+                printf("Line %d Duplicate Symbol found '%s'. Stopping\n", lineNum, symbol);
+                return 0;
+            }
+
+            // Checks to see if it passed the memory limit
+            if (address > 32768)
+            {
+                printf("Line %d Exeeding memory capacity. Stopping \n", lineNum);
                 return 0;
             }
 
             // Opcode Handler and symbol inserter
             if (strcmp(opcode, "START") == 0) // Start of SIC
             {
-                sscanf(operand, "%x", &address);                // Sets the starting address
-                address -= 3;
-                InsertSymbol(&table, symbol, address, lineNum); // Inserts symbol
+                sscanf(operand, "%x", &address); // Sets the starting address
+                InsertSymbol(&table, symbol, address, lineNum);
             }
             else if (strcmp(opcode, "RESW") == 0) // Reserve the indicated number of words for a data area.
-            { 
+            {
                 sscanf(operand, "%d", &numByte);
-                address += 3 * numByte; //3 Bytes per word 
-                printf("%x \n", address);
+                InsertSymbol(&table, symbol, address, lineNum);
+                address += 3 * numByte; // 3 Bytes per word
+                // printf("RESW %x %d \n", address,numByte);
             }
             else if (strcmp(opcode, "RESB") == 0)
             {
                 sscanf(operand, "%d", &numByte);
-                //address += numByte; // Reserves x bytes
-                printf("%x \n", address);
-                
+                InsertSymbol(&table, symbol, address, lineNum);
+                address += numByte; // Reserves x bytes
+                // printf("RESB %x %d \n", address, numByte);
             }
             else if (strcmp(opcode, "WORD") == 0)
             {
+                sscanf(operand, "%d", &numByte);
+                InsertSymbol(&table, symbol, address, lineNum);
+                if (numByte >= 8388607) // 2^23 -1 Checks to see if it exeeds signed limit for int
+                {
+                    printf("Line %d Word Constant exeeds 24 bit limit. Stopping\n", lineNum);
+                    return 0;
+                }
                 address += 3;
-
             }
             else if (strcmp(opcode, "BYTE") == 0)
             {
-                sscanf(operand, "%d", &numByte);
-                printf("%x \n", address);
-
+                sscanf(operand, "%c%s", &hexOrCon, hex); //Splits operand to X' ' or C' '
+                if (hexOrCon == 'X') // if X' '
+                {
+                    for(int i = 0; strlen(hex); i++){// Goes thru char arr
+                        if (((hex[i] != 39) && (hex[i] > 65 && hex[i] < 70) || (hex[i] > 48 && hex[i] < 57))){
+                        
+                                printf("%c", hex[i]);
+                            
+                        }
+                        }
+                    numByte = 0;
+                }
+                else if (hexOrCon == 'C')// if C ' '
+                {
+                    numByte = 0;
+                    numByte = strlen(hex) * 3; // Multiples the amount of chars by 3 to numBytes
+                }
+                else
+                {
+                    printf("Line %d Error resolving byte opcode: %s %s. Stopping\n", lineNum, opcode, operand);
+                }
+                InsertSymbol(&table, symbol, address, lineNum);
+                address += numByte;
+                printf("BYTE %x %s %s %d %c \n", address, operand, symbol, numByte, hexOrCon);
             }
             else if (strcmp(opcode, "END") == 0)
             {
+                PrintSymbolTable(table);
                 return 0;
-
             }
             else
             { // If there is no special cases/instructions it defaults and assumes it is a regular instruction
-                address += 3; // Advances addresses by 3
-
-            }
-
-            // Checks to see if it is in the symbol table
-            if (!IsInSymbolTable(table, symbol))
-            {
                 InsertSymbol(&table, symbol, address, lineNum);
-            }
-            else
-            {
-                printf("Line %d Duplicate Symbol found '%s'\n", lineNum, symbol);
-                return 0;
+                address += 3; // Advances addresses by 3
             }
 
         } // end isalpha if
@@ -132,6 +164,11 @@ int main(int argc, char *argv[])
         { // If there is no symbols
             sscanf(line, "%s %s", opcode, operand);
             // printf("Opcode:%s\nOperand:%s\n\n", opcode, operand);
+            if (isalpha(line[0]) == 0 && isblank(line[0]) == 0)
+            {
+                printf("Line %d Character %c not valid. Stopping \n", lineNum, line[0]);
+                return 0;
+            }
             address += 3; // Advances addresses by 3
 
         } // end else
@@ -142,8 +179,6 @@ int main(int argc, char *argv[])
         memset(operand, '\0', sizeof(operand));
 
     } // end fgets while loop
-
-    PrintSymbolTable(table);
 
     fclose(file); // Closes file
 }

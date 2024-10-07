@@ -2,6 +2,7 @@
 
 void DeleteList(SymbolList table)
 {
+    
     if (table == NULL)
     {
         return;

@@ -124,6 +124,7 @@ int main(int argc, char *argv[])
                 char constant;
                 char hex[32];
                 char temp[32];
+                //Commit
                 memset(temp, '\0', sizeof(temp));
                 sscanf(operand, "%c%s", &constant, hex);
                 switch (constant)

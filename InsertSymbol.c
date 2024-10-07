@@ -3,31 +3,28 @@
 void InsertSymbol(SymbolList *table, char Name[7], int Addr, int LineNum)
 {
 
-	struct Symbol *new;
-
-	new = malloc(sizeof(struct Symbol));
+	struct Symbol *new = malloc(sizeof(struct Symbol));
 	memset(new, '\0', sizeof(struct Symbol));
 
-	new->Address = Addr; //
+	new->Address = Addr;
 	new->LineNumber = LineNum;
 	strcpy(new->Name, Name);
-	new->Next = NULL; // Makes last next lead to NULL
+	new->Next = NULL; // New symbol will be the last, so Next is NULL
 
-	// If the table is empty sets the Symbol to first
+	// If the list is empty, insert as the first element
 	if (*table == NULL)
 	{
 		*table = new;
 	}
 	else
-	{						   // Otherwise it will go to the end of the list
-		SYMBOL *temp = *table; // Takes the current table and set it in temp
-		// Goes to the end of the table
-		while (temp->Next != NULL) // While temp.Next is not Null
+	{
+		// Traverse to the end of the list
+		struct Symbol *temp = *table;
+		while (temp->Next != NULL)
 		{
-			temp = temp->Next; // go to Next symbol
+			temp = temp->Next;
 		}
-		temp->Next = new; // Sets new symbol to the end
+		temp->Next = new; // Link the new symbol at the end
 	}
-
-	// printf("Symbol inserted: %s at address %x\n\n", Name, Addr); //Debugging
+	// printf("Symbol inserted: %s at address %x\n", Name, Addr);
 }

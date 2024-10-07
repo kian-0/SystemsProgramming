@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "headers.h": "c"
+        "headers.h": "c",
+        "ctype.h": "c",
+        "string.h": "c",
+        "stdio.h": "c"
     }
 }

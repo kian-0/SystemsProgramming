@@ -10,7 +10,7 @@ void PrintSymbolTable(SymbolList table)
         return;
     }
 
-    printf("Symbol Table:\n");
+    // printf("Symbol Table:\n");
     while (temp != NULL)
     {
         printf("%s\t%x\n", temp->Name, temp->Address);

@@ -124,7 +124,6 @@ int main(int argc, char *argv[])
                 char constant;
                 char hex[32];
                 char temp[32];
-                //Commit
                 memset(temp, '\0', sizeof(temp));
                 sscanf(operand, "%c%s", &constant, hex);
                 switch (constant)
@@ -134,19 +133,19 @@ int main(int argc, char *argv[])
                     {
                         if (hex[i] == 39)
                         {
-                            printf("Detected %c at %d\n", hex[i], i);
+                            // printf("Detected %c at %d\n", hex[i], i);
                         }
                         else if (hex[i] >= 48 && hex[i] <= 57)
                         {
-                            printf("Detected number %c at %d\n", hex[i], i);
+                            // printf("Detected number %c at %d\n", hex[i], i);
                             temp[strlen(temp)] = hex[i];
-                            printf("%c\t", temp[i]);
+                            // printf("%c\t", temp[i]);
                         }
                         else if (hex[i] >= 65 && hex[i] <= 70)
                         {
-                            printf("Detected letter %c at %d\n", hex[i], i);
+                            //printf("Detected letter %c at %d\n", hex[i], i);
                             temp[strlen(temp)] = hex[i];
-                            printf("%c\t", temp[i]);
+                            // printf("%c\t", temp[i]);
                         }
                         else
                         {
@@ -154,17 +153,19 @@ int main(int argc, char *argv[])
                             return 0;
                         }
                     }
-                    printf("%s\n", temp);
-                    sscanf(temp, "%x", &numByte);
+                    // printf("%s\n", temp);
+                    // sscanf(temp, "%x", &numByte);
+                    numByte = 1;
                     break;
 
                 case 'C':
-                    numByte = strlen(hex) - 2;
+                    // numByte = strlen(hex) - 2;
+                    numByte = 3;
                     break;
                 }
                 InsertSymbol(&table, symbol, address, lineNum);
                 address += numByte;
-                printf("BYTE %x %s %s %d \n", address, operand, symbol, numByte);
+                // printf("BYTE %x %s %s %d \n", address, operand, symbol, numByte);
             }
             else if (strcmp(opcode, "END") == 0)
             {

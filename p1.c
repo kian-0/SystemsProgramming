@@ -123,27 +123,6 @@ int main(int argc, char *argv[])
             }
             else if (strcmp(opcode, "BYTE") == 0)
             {
-                sscanf(operand, "%c%s", &hexOrCon, hex); //Splits operand to X' ' or C' '
-                if (hexOrCon == 'X') // if X' '
-                {
-                    for(int i = 0; strlen(hex); i++){// Goes thru char arr
-                        if (((hex[i] != 39) && (hex[i] > 65 && hex[i] < 70) || (hex[i] > 48 && hex[i] < 57))){
-                        
-                                printf("%c", hex[i]);
-                            
-                        }
-                        }
-                    numByte = 0;
-                }
-                else if (hexOrCon == 'C')// if C ' '
-                {
-                    numByte = 0;
-                    numByte = strlen(hex) * 3; // Multiples the amount of chars by 3 to numBytes
-                }
-                else
-                {
-                    printf("Line %d Error resolving byte opcode: %s %s. Stopping\n", lineNum, opcode, operand);
-                }
                 InsertSymbol(&table, symbol, address, lineNum);
                 address += numByte;
                 printf("BYTE %x %s %s %d %c \n", address, operand, symbol, numByte, hexOrCon);

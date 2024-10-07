@@ -17,8 +17,6 @@ int main(int argc, char *argv[])
     char symbol[7];
     char opcode[32];
     char operand[32];
-    char hex[32];
-    char hexOrCon;
     int lineNum = 0;
     int address = 0;
     int numByte = 0;
@@ -123,13 +121,53 @@ int main(int argc, char *argv[])
             }
             else if (strcmp(opcode, "BYTE") == 0)
             {
+                char constant;
+                char hex[32];
+                char temp[32];
+                memset(temp, '\0', sizeof(temp));
+                sscanf(operand, "%c%s", &constant, hex);
+                switch (constant)
+                {
+                case 'X':
+                    for (int i = 0; i < strlen(hex); i++)
+                    {
+                        if (hex[i] == 39)
+                        {
+                            printf("Detected %c at %d\n", hex[i], i);
+                        }
+                        else if (hex[i] >= 48 && hex[i] <= 57)
+                        {
+                            printf("Detected number %c at %d\n", hex[i], i);
+                            temp[strlen(temp)] = hex[i];
+                            printf("%c\t", temp[i]);
+                        }
+                        else if (hex[i] >= 65 && hex[i] <= 70)
+                        {
+                            printf("Detected letter %c at %d\n", hex[i], i);
+                            temp[strlen(temp)] = hex[i];
+                            printf("%c\t", temp[i]);
+                        }
+                        else
+                        {
+                            printf("Line %d Error at BYTE with %c at %d. Stopping\n", lineNum, hex[i], i);
+                            return 0;
+                        }
+                    }
+                    printf("%s\n", temp);
+                    sscanf(temp, "%x", &numByte);
+                    break;
+
+                case 'C':
+                    numByte = strlen(hex) - 2;
+                    break;
+                }
                 InsertSymbol(&table, symbol, address, lineNum);
                 address += numByte;
-                printf("BYTE %x %s %s %d %c \n", address, operand, symbol, numByte, hexOrCon);
+                printf("BYTE %x %s %s %d \n", address, operand, symbol, numByte);
             }
             else if (strcmp(opcode, "END") == 0)
             {
-                PrintSymbolTable(table);
+                PrintSymbolTable(table); //Marks end of SIC file and prints out symbol table
                 return 0;
             }
             else

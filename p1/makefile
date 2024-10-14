@@ -1,8 +1,8 @@
-project2: p2.o PrintSymbolTable.o InsertSymbol.o IsInSymbolTable.o
-		gcc -o project2 p2.o PrintSymbolTable.o InsertSymbol.o IsInSymbolTable.o
+project1: p1.o PrintSymbolTable.o InsertSymbol.o IsInSymbolTable.o
+		gcc -o project1 p1.o PrintSymbolTable.o InsertSymbol.o IsInSymbolTable.o
 
-p2.o: p2.c headers.h
-		gcc -c -g -Wall p2.c
+p1.o: p1.c headers.h
+		gcc -c -g -Wall p1.c
 
 PrintSymbolTable.o: PrintSymbolTable.c headers.h
 		gcc -c -g -Wall PrintSymbolTable.c

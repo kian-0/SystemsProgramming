@@ -41,3 +41,16 @@ Had to make the SymbolList table a pointer: *table in the function
 and &table in p1.c
 
 It then worked after than but worked like a stack so had to modify it so that would act like a queue instead.
+
+After getting all the basic output corrected started working on the smaller details specfically targeting 
+the test criteria.
+
+A lot of small things came up like how it was not picking up duplicates and it turns out that the temp did not copy the table.
+
+After this point it was lot of fine tuning and gearing it towards specification. 
+
+
+
+
+
+I have had issues with getting to working on the project due to multiple commitments i have made and my inability to follow up on all of them.

@@ -15,8 +15,8 @@ int main(int argc, char *argv[])
     char line[1024];
     // Need to check validity of char size below
     char symbol[7];
-    char opcode[32];
-    char operand[32];
+    char opcode[64];
+    char operand[64];
     int lineNum = 0;
     int address = 0;
     int numByte = 0;
@@ -43,6 +43,11 @@ int main(int argc, char *argv[])
     {
         lineNum++;
 
+        // Clears all the arrays in the event the following instructions do not have anything in that position
+        memset(symbol, '\0', sizeof(symbol));
+        memset(opcode, '\0', sizeof(opcode));
+        memset(operand, '\0', sizeof(operand));
+
         // Displays read line
         // printf("%d Reading: %s", lineNum, line);
 
@@ -65,7 +70,7 @@ int main(int argc, char *argv[])
         if (isalpha(line[0]) != 0)
         { // If there is a symbol
             sscanf(line, "%s %s %[^\n]s", symbol, opcode, operand);
-            // printf("Symbol:%s\nOpcode:%s\nOperand:%s\n\n", symbol, opcode, operand);
+            //printf("Symbol:%s\nOpcode:%s\nOperand:%s\n\n", symbol, opcode, operand);
 
             // Checks if the symbol is not the same as a directive
             if (strcmp(symbol, "START") == 0 || strcmp(symbol, "END") == 0 || strcmp(symbol, "BYTE") == 0 || strcmp(symbol, "WORD") == 0 || strcmp(symbol, "RESB") == 0 || strcmp(symbol, "RESW") == 0 || strcmp(symbol, "RESR") == 0 || strcmp(symbol, "EXPORTS") == 0)
@@ -121,33 +126,30 @@ int main(int argc, char *argv[])
             }
             else if (strcmp(opcode, "BYTE") == 0)
             {
-                char constant;
+                char indicator;
                 char hex[32];
                 char temp[32];
-                //Commit
-                memset(temp, '\0', sizeof(temp));
-                sscanf(operand, "%c%s", &constant, hex);
-                // printf("%s\n",operand);
-                switch (constant)
+                memset(temp,'\0',sizeof(temp));
+                memset(hex, '\0',sizeof(hex));
+                sscanf(operand, "%c%s", &indicator, hex);
+                switch (indicator)
                 {
                 case 'X':
                     for (int i = 0; i < strlen(hex); i++)
                     {
                         if (hex[i] == 39)
                         {
-                            // printf("Detected %c at %d\n", hex[i], i);
+                            //printf("Detected %c at %d\n", hex[i], i);
                         }
                         else if (hex[i] >= 48 && hex[i] <= 57)
                         {
-                            // printf("Detected number %c at %d\n", hex[i], i);
+                            //printf("Detected number %c at %d\n", hex[i], i);
                             temp[strlen(temp)] = hex[i];
-                            // printf("%c\t", temp[i]);
                         }
                         else if (hex[i] >= 65 && hex[i] <= 70)
                         {
-                            printf("Detected letter %c at %d\n", hex[i], i);
+                            //printf("Detected letter %c at %d\n", hex[i], i);
                             temp[strlen(temp)] = hex[i];
-                            // printf("%c\t", temp[i]);
                         }
                         else
                         {
@@ -155,7 +157,7 @@ int main(int argc, char *argv[])
                             return 0;
                         }
                     }
-                    // printf("%s\n", temp);
+                    //printf("%s\n", temp);
                     sscanf(temp, "%x", &numByte);
                     break;
 
@@ -165,8 +167,7 @@ int main(int argc, char *argv[])
                 }
                 InsertSymbol(&table, symbol, address, lineNum);
                 address += numByte;
-                printf("BYTE %x %s %s %d \n", address, operand, symbol, numByte);
-                printf("%s",operand);
+                memset(operand, '\0', sizeof(operand));
             }
             else if (strcmp(opcode, "END") == 0)
             {

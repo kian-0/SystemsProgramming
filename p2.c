@@ -10,10 +10,9 @@
 
 int main(int argc, char *argv[])
 {
-    // Starts up file
+    // Starts up file and variables
     FILE *file;
     char line[1024];
-    // Need to check validity of char size below
     char symbol[7];
     char opcode[64];
     char operand[64];
@@ -21,6 +20,8 @@ int main(int argc, char *argv[])
     int address = 0;
     int numByte = 0;
     SymbolList table = NULL;
+    char filename[32];
+    sprintf(filename, "%s.obj", argv[1]);
 
     // Checks if there is the correct amount of arguments
     if (argc != 2)
@@ -171,7 +172,12 @@ int main(int argc, char *argv[])
             }
             else if (strcmp(opcode, "END") == 0)
             {
+                memset(symbol, '\0', sizeof(symbol));
+                memset(opcode, '\0', sizeof(opcode));
+                memset(operand, '\0', sizeof(operand));
                 PrintSymbolTable(table); // Marks end of SIC file and prints out symbol table
+                GenerateObjectFile(filename);
+                DeleteList(table);
                 return 0;
             }
             else
@@ -203,3 +209,4 @@ int main(int argc, char *argv[])
 
     fclose(file); // Closes file
 }
+

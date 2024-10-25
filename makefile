@@ -1,5 +1,5 @@
-project2: p2.o PrintSymbolTable.o InsertSymbol.o IsInSymbolTable.o
-		gcc -o project2 p2.o PrintSymbolTable.o InsertSymbol.o IsInSymbolTable.o
+project2: p2.o PrintSymbolTable.o InsertSymbol.o IsInSymbolTable.o GenerateObjectFile.o DeleteList.o
+		gcc -o project2 p2.o PrintSymbolTable.o InsertSymbol.o IsInSymbolTable.o GenerateObjectFile.o DeleteList.o
 
 p2.o: p2.c headers.h
 		gcc -c -g -Wall p2.c
@@ -13,5 +13,8 @@ InsertSymbol.o: InsertSymbol.c headers.h
 IsInSymbolTable.o: IsInSymbolTable.c headers.h
 		gcc -c -g -Wall IsInSymbolTable.c
 
-DeleteList.o: DeleteList.c headers.c
+GenerateObjectFile.o: GenerateObjectFile.c headers.h
+		gcc -c -g -Wall GenerateObjectFile.c
+
+DeleteList.o: DeleteList.c headers.h
 		gcc -c -g -Wall DeleteList.c

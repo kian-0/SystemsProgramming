@@ -13,6 +13,12 @@ InsertSymbol.o: InsertSymbol.c headers.h
 IsInSymbolTable.o: IsInSymbolTable.c headers.h
 		gcc -c -g -Wall IsInSymbolTable.c
 
+Pass2.o: Pass2.c headers.h
+		gcc -c -g -Wall Pass2.c
+
+InsertTRecord.o: InsertTRecord.c headers.h
+		gcc -c -g -Wall InsertTRecord.c
+
 GenerateObjectFile.o: GenerateObjectFile.c headers.h
 		gcc -c -g -Wall GenerateObjectFile.c
 

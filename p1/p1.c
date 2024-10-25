@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
         // Splits the line into core parts
         if (isalpha(line[0]) != 0)
         { // If there is a symbol
-            sscanf(line, "%s %s %s", symbol, opcode, operand);
+            sscanf(line, "%s %s %[^\n]s", symbol, opcode, operand);
             // printf("Symbol:%s\nOpcode:%s\nOperand:%s\n\n", symbol, opcode, operand);
 
             // Checks if the symbol is not the same as a directive
@@ -127,6 +127,7 @@ int main(int argc, char *argv[])
                 //Commit
                 memset(temp, '\0', sizeof(temp));
                 sscanf(operand, "%c%s", &constant, hex);
+                // printf("%s\n",operand);
                 switch (constant)
                 {
                 case 'X':
@@ -134,19 +135,19 @@ int main(int argc, char *argv[])
                     {
                         if (hex[i] == 39)
                         {
-                            printf("Detected %c at %d\n", hex[i], i);
+                            // printf("Detected %c at %d\n", hex[i], i);
                         }
                         else if (hex[i] >= 48 && hex[i] <= 57)
                         {
-                            printf("Detected number %c at %d\n", hex[i], i);
+                            // printf("Detected number %c at %d\n", hex[i], i);
                             temp[strlen(temp)] = hex[i];
-                            printf("%c\t", temp[i]);
+                            // printf("%c\t", temp[i]);
                         }
                         else if (hex[i] >= 65 && hex[i] <= 70)
                         {
                             printf("Detected letter %c at %d\n", hex[i], i);
                             temp[strlen(temp)] = hex[i];
-                            printf("%c\t", temp[i]);
+                            // printf("%c\t", temp[i]);
                         }
                         else
                         {
@@ -154,7 +155,7 @@ int main(int argc, char *argv[])
                             return 0;
                         }
                     }
-                    printf("%s\n", temp);
+                    // printf("%s\n", temp);
                     sscanf(temp, "%x", &numByte);
                     break;
 
@@ -165,6 +166,7 @@ int main(int argc, char *argv[])
                 InsertSymbol(&table, symbol, address, lineNum);
                 address += numByte;
                 printf("BYTE %x %s %s %d \n", address, operand, symbol, numByte);
+                printf("%s",operand);
             }
             else if (strcmp(opcode, "END") == 0)
             {

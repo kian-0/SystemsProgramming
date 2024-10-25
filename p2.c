@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
         // Splits the line into core parts
         if (isalpha(line[0]) != 0)
         { // If there is a symbol
-            sscanf(line, "%s %s %s", symbol, opcode, operand);
+            sscanf(line, "%s %s %[^\n]s", symbol, opcode, operand);
             // printf("Symbol:%s\nOpcode:%s\nOperand:%s\n\n", symbol, opcode, operand);
 
             // Checks if the symbol is not the same as a directive
@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
                 char hex[32];
                 char temp[32];
                 memset(temp, '\0', sizeof(temp));
-                sscanf(operand, "%c%s", &constant, hex);
+                sscanf(operand, "%c%[^\n]s", &constant, hex);
                 switch (constant)
                 {
                 case 'X':
@@ -181,7 +181,7 @@ int main(int argc, char *argv[])
         } // end isalpha if
         else
         { // If there is no symbols
-            sscanf(line, "%s %s", opcode, operand);
+            sscanf(line, "%s %[^\n]s", opcode, operand);
             // printf("Opcode:%s\nOperand:%s\n\n", opcode, operand);
             if (isalpha(line[0]) == 0 && isblank(line[0]) == 0)
             {

@@ -15,8 +15,8 @@ int main(int argc, char *argv[])
     char line[1024];
     // Need to check validity of char size below
     char symbol[7];
-    char opcode[32];
-    char operand[32];
+    char opcode[64];
+    char operand[64];
     int lineNum = 0;
     int address = 0;
     int numByte = 0;
@@ -42,6 +42,11 @@ int main(int argc, char *argv[])
     while (fgets(line, 1024, file) != NULL)
     {
         lineNum++;
+
+        // Clears all the arrays in the event the following instructions do not have anything in that position
+        memset(symbol, '\0', sizeof(symbol));
+        memset(opcode, '\0', sizeof(opcode));
+        memset(operand, '\0', sizeof(operand));
 
         // Displays read line
         // printf("%d Reading: %s", lineNum, line);
@@ -121,12 +126,13 @@ int main(int argc, char *argv[])
             }
             else if (strcmp(opcode, "BYTE") == 0)
             {
-                char constant;
+                char indicator;
                 char hex[32];
                 char temp[32];
                 memset(temp, '\0', sizeof(temp));
-                sscanf(operand, "%c%[^\n]s", &constant, hex);
-                switch (constant)
+                memset(hex, '\0', sizeof(hex));
+                sscanf(operand, "%c%s", &indicator, hex);
+                switch (indicator)
                 {
                 case 'X':
                     for (int i = 0; i < strlen(hex); i++)
@@ -139,13 +145,11 @@ int main(int argc, char *argv[])
                         {
                             // printf("Detected number %c at %d\n", hex[i], i);
                             temp[strlen(temp)] = hex[i];
-                            // printf("%c\t", temp[i]);
                         }
                         else if (hex[i] >= 65 && hex[i] <= 70)
                         {
-                            //printf("Detected letter %c at %d\n", hex[i], i);
+                            // printf("Detected letter %c at %d\n", hex[i], i);
                             temp[strlen(temp)] = hex[i];
-                            // printf("%c\t", temp[i]);
                         }
                         else
                         {
@@ -154,22 +158,20 @@ int main(int argc, char *argv[])
                         }
                     }
                     // printf("%s\n", temp);
-                    // sscanf(temp, "%x", &numByte);
-                    numByte = 1;
+                    sscanf(temp, "%x", &numByte);
                     break;
 
                 case 'C':
-                    // numByte = strlen(hex) - 2;
-                    numByte = 3;
+                    numByte = strlen(hex) - 2;
                     break;
                 }
                 InsertSymbol(&table, symbol, address, lineNum);
                 address += numByte;
-                // printf("BYTE %x %s %s %d \n", address, operand, symbol, numByte);
+                memset(operand, '\0', sizeof(operand));
             }
             else if (strcmp(opcode, "END") == 0)
             {
-                PrintSymbolTable(table); //Marks end of SIC file and prints out symbol table
+                PrintSymbolTable(table); // Marks end of SIC file and prints out symbol table
                 return 0;
             }
             else
@@ -181,7 +183,7 @@ int main(int argc, char *argv[])
         } // end isalpha if
         else
         { // If there is no symbols
-            sscanf(line, "%s %[^\n]s", opcode, operand);
+            sscanf(line, "%s %s", opcode, operand);
             // printf("Opcode:%s\nOperand:%s\n\n", opcode, operand);
             if (isalpha(line[0]) == 0 && isblank(line[0]) == 0)
             {

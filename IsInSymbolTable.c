@@ -8,7 +8,7 @@ int IsInSymbolTable(SymbolList table, char Test[7])
     {
         if (!strcmp(temp->Name, Test))
         {
-            // printf("Symbol found\n");
+            //printf("Symbol found\n");
             return 1;
         }
         temp = temp->Next;

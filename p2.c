@@ -17,11 +17,12 @@ int main(int argc, char *argv[])
     char opcode[64];
     char operand[64];
     int lineNum = 0;
-    int address = 0;
+    int address = -1;
     int numByte = 0;
+    int hasStart = 0;
     SymbolList table = NULL;
     char filename[32];
-    sprintf(filename, "%s.obj", argv[1]);
+    sprintf(filename, "%s", argv[1]);
 
     // Checks if there is the correct amount of arguments
     if (argc != 2)
@@ -94,11 +95,13 @@ int main(int argc, char *argv[])
                 return 0;
             }
 
+            
             // Opcode Handler and symbol inserter
             if (strcmp(opcode, "START") == 0) // Start of SIC
             {
                 sscanf(operand, "%x", &address); // Sets the starting address
                 InsertSymbol(&table, symbol, address, lineNum);
+                hasStart = 1;
             }
             else if (strcmp(opcode, "RESW") == 0) // Reserve the indicated number of words for a data area.
             {
@@ -175,8 +178,15 @@ int main(int argc, char *argv[])
                 memset(symbol, '\0', sizeof(symbol));
                 memset(opcode, '\0', sizeof(opcode));
                 memset(operand, '\0', sizeof(operand));
-                PrintSymbolTable(table); // Marks end of SIC file and prints out symbol table
-                GenerateObjectFile(filename);
+                // PrintSymbolTable(table); // Marks end of SIC file and prints out symbol table
+                // Need to do pass 2
+                if(hasStart == 0){
+                    printf("No Start Directive Stopping\n");
+                    DeleteList(table);
+                    return 0;
+                }
+                fclose(file);
+                Pass2(table, filename);
                 DeleteList(table);
                 return 0;
             }
@@ -209,4 +219,3 @@ int main(int argc, char *argv[])
 
     fclose(file); // Closes file
 }
-

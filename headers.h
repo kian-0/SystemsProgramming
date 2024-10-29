@@ -60,6 +60,10 @@ struct eRecord
 
 typedef struct eRecord ERECORD;
 
+SymbolList Pass1(char filename[32]);
+
+void Pass2(SymbolList table, char filename[32]);
+
 void PrintSymbolTable(SymbolList table);
 
 int IsInSymbolTable(SymbolList table, char Test[7]);
@@ -71,8 +75,6 @@ void DeleteList(SymbolList table);
 void DeleteTList(tRecordList rtable);
 
 void DeleteMList(mRecordList mtable);
-
-void Pass2(SymbolList table, char filename[32]);
 
 void InsertTRecord(tRecordList *rtable, int Start, int Length, char Code[60]);
 

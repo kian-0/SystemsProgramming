@@ -26,8 +26,6 @@ void Pass2(SymbolList table, char filename[32])
 
     file = fopen(filename, "r");
 
-    PrintSymbolTable(table);
-
     // If file doesn't exist
     if (file == NULL)
     {
@@ -64,7 +62,10 @@ void Pass2(SymbolList table, char filename[32])
             if (IsInSymbolTable(table, operand))
             {
                 //printf("Is in symbol table\n");
-                InsertMRecord(&mtable, address, 4, '+', startSym);
+                sscanf(CodeAdd, "%x", &address);
+                InsertMRecord(&mtable, address, strlen(CodeAdd), '+', startSym);
+                memset(CodeAdd, '\0', sizeof(CodeAdd));
+                
             }
 
             if (strcmp(opcode, "START") == 0) // Start of SIC
@@ -165,6 +166,7 @@ void Pass2(SymbolList table, char filename[32])
 
         // Below adds t Records
         sprintf(CodeAdd, "%s%.4x",Instruction(opcode),address);
+        printf("%s\n%s\n", CodeAdd,line);
     
         // InsertTRecord(&rtable, address,0,CodeAdd);
 
@@ -175,16 +177,21 @@ void Pass2(SymbolList table, char filename[32])
 
         if(strlen(Code) + strlen(CodeAdd) < 60){
             strcat(Code, CodeAdd);
+            memset(CodeAdd, '\0', sizeof(CodeAdd));
+            
         }else{
             Length = strlen(Code)/2;
             strcat(Code, CodeAdd);
             InsertTRecord(&rtable,Start,Length,Code);
             memset(Code, '\0', sizeof(Code));
+            memset(CodeAdd, '\0', sizeof(CodeAdd));
         }
         // printf("%s\n",Code);
         
     }
 
+
+    Length = strlen(Code)/2;
     InsertTRecord(&rtable, Start, Length, Code); //adds last parts of t record
     fclose(file);
     char outname[32];

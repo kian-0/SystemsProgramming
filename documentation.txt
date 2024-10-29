@@ -1,11 +1,25 @@
 Started with creating a function to handled objectfile construction
 
 Make a function to handle Record creation 
--> Created tRecord List
--> Created mRecord List
+-> Created tRecord List: LinkedList for tRecords
+-> Created mRecord List: LinkedList for mRecords
 -> Created struct hRecord
 -> Created struct eRecord
 
 Created Pass2 taking in table from p2(Pass1)
 
-Passes hRecord, rtable, mtable, and eRecord into GenerateObjectFile
+Passes hRecord, rtable, mtable, and eRecord into GenerateObjectFile:
+Only present in Pass2
+Prints header 
+Prints thru tRecord List
+Prints thru mRecord List
+Prints end
+
+Created Instruction.c:
+Handles opcode interpretation
+Takes "string" opcode 
+Returns hex representation
+
+Moved Pass1 to a seperate file:
+This was to make it easier for me to read 
+as well as add the --pass1only option

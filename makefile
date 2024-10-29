@@ -1,5 +1,5 @@
-project2: p2.o PrintSymbolTable.o InsertSymbol.o IsInSymbolTable.o Pass2.o InsertTRecord.o InsertMRecord.o Instruction.o GenerateObjectFile.o DeleteList.o
-		gcc -o project2 p2.o PrintSymbolTable.o InsertSymbol.o IsInSymbolTable.o Pass2.o InsertTRecord.o InsertMRecord.o Instruction.o GenerateObjectFile.o DeleteList.o
+project2: p2.o PrintSymbolTable.o InsertSymbol.o IsInSymbolTable.o Pass1.o Pass2.o InsertTRecord.o InsertMRecord.o Instruction.o GenerateObjectFile.o DeleteList.o
+		gcc -o project2 p2.o PrintSymbolTable.o InsertSymbol.o IsInSymbolTable.o Pass1.o Pass2.o InsertTRecord.o InsertMRecord.o Instruction.o GenerateObjectFile.o DeleteList.o
 
 p2.o: p2.c headers.h
 		gcc -c -g -Wall p2.c
@@ -12,6 +12,9 @@ InsertSymbol.o: InsertSymbol.c headers.h
 
 IsInSymbolTable.o: IsInSymbolTable.c headers.h
 		gcc -c -g -Wall IsInSymbolTable.c
+
+Pass1.o: Pass1.c headers.h
+		gcc -c -g -Wall Pass1.c
 
 Pass2.o: Pass2.c headers.h
 		gcc -c -g -Wall Pass2.c

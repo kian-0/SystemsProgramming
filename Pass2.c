@@ -155,7 +155,7 @@ void Pass2(SymbolList table, char filename[32])
             else
             { // If there is no special cases/instructions it defaults and assumes it is a regular instruction
 
-                if (IsDirective(opcode) != 0 && IsInSymbolTable(table, operand) == 0 )
+                if (IsDirective(opcode) != 0 && IsInSymbolTable(table, operand) == 0 && strcmp(opcode, "RSUB") != 0)
                 {
                     printf("Line %d Symbol %s is not defined. Stopping\n", lineNum, operand);
                     exit(1);
@@ -183,7 +183,7 @@ void Pass2(SymbolList table, char filename[32])
                 memset(temp, '\0', sizeof(temp)); // Clears temp
             }
 
-            if (IsDirective(opcode) != 0 && IsInSymbolTable(table, operand) == 0 && strcmp(operand, "RSUB") != 0)
+            if (IsDirective(opcode) != 0 && IsInSymbolTable(table, operand) == 0 && strcmp(opcode, "RSUB") != 0)
             {
                 printf("Line %d Symbol %s is not defined. Stopping\n", lineNum, operand);
                 exit(1);

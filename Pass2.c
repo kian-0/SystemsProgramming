@@ -142,7 +142,8 @@ void Pass2(SymbolList table, char filename[32])
             }
             else if (strcmp(opcode, "END") == 0)
             {
-                if(IsInSymbolTable(table,operand) == 0){
+                if (IsInSymbolTable(table, operand) == 0)
+                {
                     printf("Line %d Symbol %s is not defined. Stopping\n", lineNum, operand);
                     exit(1);
                 }
@@ -228,12 +229,8 @@ void Pass2(SymbolList table, char filename[32])
         }
     }
 
-    // If there was any code left behind
-    if (Code != '\0')
-    {
-        Length = strlen(Code) / 2;
-        InsertTRecord(&rtable, Start, Length, Code); // adds last parts of t record
-    }
+    Length = strlen(Code) / 2;
+    InsertTRecord(&rtable, Start, Length, Code); // adds last parts of t record
 
     fclose(file);
     char outname[32];

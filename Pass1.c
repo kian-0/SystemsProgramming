@@ -60,21 +60,21 @@ SymbolList Pass1(char filename[32])
             if (strcmp(symbol, "START") == 0 || strcmp(symbol, "END") == 0 || strcmp(symbol, "BYTE") == 0 || strcmp(symbol, "WORD") == 0 || strcmp(symbol, "RESB") == 0 || strcmp(symbol, "RESW") == 0 || strcmp(symbol, "RESR") == 0 || strcmp(symbol, "EXPORTS") == 0)
             {
                 printf("Line %d Symbol %s is not a valid name. Stopping\n", lineNum, symbol);
-                return 0;
+                exit(1);
             }
 
             // Checks to see if it is in the symbol table
             if (IsInSymbolTable(table, symbol))
             {
                 printf("Line %d Duplicate Symbol found '%s'. Stopping\n", lineNum, symbol);
-                return 0;
+                exit(1);
             }
 
             // Checks to see if it passed the memory limit
             if (address > 32768)
             {
                 printf("Line %d Exeeding memory capacity. Stopping \n", lineNum);
-                return 0;
+                exit(1);
             }
 
             // Opcode Handler and symbol inserter
@@ -105,7 +105,7 @@ SymbolList Pass1(char filename[32])
                 if (numByte >= 8388607) // 2^23 -1 Checks to see if it exeeds signed limit for int
                 {
                     printf("Line %d Word Constant exeeds 24 bit limit. Stopping\n", lineNum);
-                    return 0;
+                    exit(1);
                 }
                 address += 3;
             }
@@ -139,7 +139,7 @@ SymbolList Pass1(char filename[32])
                         else
                         {
                             printf("Line %d Error at BYTE with %c at %d. Stopping\n", lineNum, hex[i], i);
-                            return 0;
+                            exit(1);
                         }
                     }
                     // printf("%s\n", temp);
@@ -164,7 +164,7 @@ SymbolList Pass1(char filename[32])
                 {
                     printf("No Start Directive Stopping\n");
                     DeleteList(table);
-                    return 0;
+                    exit(1);
                 }
                 fclose(file);
                 return table;
@@ -183,7 +183,7 @@ SymbolList Pass1(char filename[32])
             if (isalpha(line[0]) == 0 && isblank(line[0]) == 0)
             {
                 printf("Line %d Character %c not valid. Stopping \n", lineNum, line[0]);
-                return 0;
+                exit(1);
             }
             address += 3; // Advances addresses by 3
 

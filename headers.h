@@ -83,3 +83,5 @@ void InsertMRecord(mRecordList *mtable, int Start, int Length, char Flag, char S
 const char *Instruction(char opcode[64]);
 
 void GenerateObjectFile(char filename[32], HRECORD hRecord, tRecordList rtable, mRecordList mtable, ERECORD eRecord);
+
+int IsDirective(char symbol[7]);

@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
             printf("End of Pass1\n");
         }
         else{
-            printf("Not a valid option\n");
+            printf("Not a valid option\n./project2 --o for options\n");
         } // end options if branch
     } //end argc == 3
 

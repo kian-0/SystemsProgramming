@@ -2,6 +2,11 @@
 
 void Pass2(SymbolList table, char filename[32])
 {
+    if (table == NULL)
+    {
+        exit(1);
+    }
+
     // For T Records Hold values untill code is filled then it sends it to the tRecord list
     int Start;
     int Length;
@@ -23,6 +28,7 @@ void Pass2(SymbolList table, char filename[32])
     int lineNum = 0;
     int address = 0;
     int numByte = 0;
+    char r1;
 
     file = fopen(filename, "r");
 
@@ -56,37 +62,34 @@ void Pass2(SymbolList table, char filename[32])
         if (isalpha(line[0]) != 0)
         { // If there is a symbol
             sscanf(line, "%s %s %s", symbol, opcode, operand);
-            //printf("Symbol:%s\nOpcode:%s\nOperand:%s\nLine:%d\n\n", symbol, opcode, operand, lineNum);
+            // printf("Symbol:%s\nOpcode:%s\nOperand:%s\nLine:%d\n\n", symbol, opcode, operand, lineNum);
 
             // Creates the mRecords (INCORRECTLY) it hard codes the length,flag, and where its being modified
             if (IsInSymbolTable(table, operand))
             {
-                //printf("Is in symbol table\n");
+                // printf("Is in symbol table\n");
                 sscanf(CodeAdd, "%x", &address);
                 InsertMRecord(&mtable, address, strlen(CodeAdd), '+', startSym);
                 memset(CodeAdd, '\0', sizeof(CodeAdd));
-                
             }
 
             if (strcmp(opcode, "START") == 0) // Start of SIC
             {
                 sscanf(operand, "%x", &address); // Gets starting address
                 strcpy(startSym, symbol);        // Used for m Records and h record
-                strcpy(hRecord.Name, startSym); // Sets the name of the start record
-                hRecord.Start = address;        // Sets starting address
+                strcpy(hRecord.Name, startSym);  // Sets the name of the start record
+                hRecord.Start = address;         // Sets starting address
                 eRecord.Address = address;
             }
             else if (strcmp(opcode, "RESW") == 0) // Reserve the indicated number of words for a data area.
             {
                 sscanf(operand, "%d", &numByte);
                 address += 3 * numByte; // 3 Bytes per word
-
             }
             else if (strcmp(opcode, "RESB") == 0)
             {
                 sscanf(operand, "%d", &numByte);
                 address += numByte; // Reserves x bytes
-
             }
             else if (strcmp(opcode, "WORD") == 0)
             {
@@ -133,66 +136,105 @@ void Pass2(SymbolList table, char filename[32])
                     numByte = strlen(hex) - 2;
                     break;
                 }
-                //INSERT
 
                 address += numByte;
                 memset(operand, '\0', sizeof(operand));
             }
             else if (strcmp(opcode, "END") == 0)
             {
+                if(IsInSymbolTable(table,operand) == 0){
+                    printf("Line %d Symbol %s is not defined. Stopping\n", lineNum, operand);
+                    exit(1);
+                }
+
                 hRecord.Size = address;
                 memset(symbol, '\0', sizeof(symbol));
                 memset(opcode, '\0', sizeof(opcode));
                 memset(operand, '\0', sizeof(operand));
             }
+            else
+            { // If there is no special cases/instructions it defaults and assumes it is a regular instruction
 
+                if (IsDirective(opcode) != 0 && IsInSymbolTable(table, operand) == 0 )
+                {
+                    printf("Line %d Symbol %s is not defined. Stopping\n", lineNum, operand);
+                    exit(1);
+                }
 
+                address += 3; // Advances addresses by 3
+            }
         }
         else
         {
             // Ensures the reading lines up so that the opcode is not read as a symbol... etc
             sscanf(line, "%s %s", opcode, operand);
-            //printf("Symbol:%s\nOpcode:%s\nOperand:%s\nLine:%d\n\n", symbol, opcode, operand, lineNum);
+            // printf("Symbol:%s\nOpcode:%s\nOperand:%s\nLine:%d\n\n", symbol, opcode, operand, lineNum);
+
+            // Checks to see if the operand contains "," for r1 stuff
+            if (strstr(operand, ",") != 0)
+            {
+                r1 = '\0';                                                          // Clears r1 for new r1
+                char temp[64];                                                      // Creates temp
+                strcpy(temp, operand);                                              // Copies to temp
+                sscanf(strstr(operand, ","), "%*c%c", &r1);                         // Reads the ",X"
+                memset(operand, '\0', sizeof(operand));                             // Clears operand
+                strncpy(operand, temp, (strlen(temp) - strlen(strstr(temp, ",")))); // Copies string back minus ",X"
+                // printf("%s %c\n", operand,r1); //Debugging
+                memset(temp, '\0', sizeof(temp)); // Clears temp
+            }
+
+            if (IsDirective(opcode) != 0 && IsInSymbolTable(table, operand) == 0 && strcmp(operand, "RSUB") != 0)
+            {
+                printf("Line %d Symbol %s is not defined. Stopping\n", lineNum, operand);
+                exit(1);
+            }
 
             // Creates the mRecords (INCORRECTLY) it hard codes the length,flag, and where its being modified
             if (IsInSymbolTable(table, operand))
             {
-                //printf("Is in symbol table\n");
+                // printf("Is in symbol table\n");
                 InsertMRecord(&mtable, address, 4, '+', startSym);
             }
-            address+=3;
-        } 
-
+            address += 3;
+        }
 
         // Below adds t Records
-        sprintf(CodeAdd, "%s%.4x",Instruction(opcode),address);
-        printf("%s\n%s\n", CodeAdd,line);
-    
-        // InsertTRecord(&rtable, address,0,CodeAdd);
+        sprintf(CodeAdd, "%s%.4x", Instruction(opcode), address); // Calculates code is to be added
+        // printf("%s\n%s\n", CodeAdd,line);
 
-        if(strlen(Code) == 0){
-            Start = address + 1;
-
+        // For the very first one
+        if (strlen(Code) == 0)
+        {
+            Start = address + 1;                    // Sets starting address
+            strcat(Code, CodeAdd);                  // Adds to code base
+            memset(CodeAdd, '\0', sizeof(CodeAdd)); // Clears CodeAdd
         }
 
-        if(strlen(Code) + strlen(CodeAdd) < 60){
-            strcat(Code, CodeAdd);
-            memset(CodeAdd, '\0', sizeof(CodeAdd));
-            
-        }else{
-            Length = strlen(Code)/2;
-            strcat(Code, CodeAdd);
-            InsertTRecord(&rtable,Start,Length,Code);
-            memset(Code, '\0', sizeof(Code));
-            memset(CodeAdd, '\0', sizeof(CodeAdd));
+        if (strlen(Code) + strlen(CodeAdd) < 60)
+        {                                           // If code length is less than 60 would add to the code
+            strcat(Code, CodeAdd);                  // Adds to code base
+            memset(CodeAdd, '\0', sizeof(CodeAdd)); // Clears CodeAdd
         }
-        // printf("%s\n",Code);
-        
+        else
+        {                                                // If longer than 60 would insert to the T record list and create a new one
+            Length = strlen(Code) / 2;                   // Calculates the length
+            InsertTRecord(&rtable, Start, Length, Code); // Insters to tRecord List
+            memset(Code, '\0', sizeof(Code));            // Clears Code
+            memset(CodeAdd, '\0', sizeof(CodeAdd));      // Clears CodeAdd
+
+            // Starts new one
+            strcat(Code, CodeAdd); // Adds to code base
+            Start = address + 1;   // Sets new Start address
+        }
     }
 
+    // If there was any code left behind
+    if (Code != '\0')
+    {
+        Length = strlen(Code) / 2;
+        InsertTRecord(&rtable, Start, Length, Code); // adds last parts of t record
+    }
 
-    Length = strlen(Code)/2;
-    InsertTRecord(&rtable, Start, Length, Code); //adds last parts of t record
     fclose(file);
     char outname[32];
     sprintf(outname, "%s.obj", filename);

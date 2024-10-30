@@ -98,6 +98,7 @@ int main(int argc, char *argv[])
             {
                 sscanf(operand, "%x", &address); // Sets the starting address
                 InsertSymbol(&table, symbol, address, lineNum);
+                printf("%b",lineNum);
             }
             else if (strcmp(opcode, "RESW") == 0) // Reserve the indicated number of words for a data area.
             {

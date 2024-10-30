@@ -11,13 +11,13 @@ void Pass2(SymbolList table, char filename[32])
     int Start;
     int Length;
     char Code[60];
-    memset(Code, '\0', sizeof(Code));
     char CodeAdd[60];
     FILE *file;
     tRecordList rtable = NULL;
     mRecordList mtable = NULL;
     HRECORD hRecord;
     ERECORD eRecord;
+    memset(Code, '\0', sizeof(Code));
 
     // Line Reading Vars
     char line[1024];
@@ -200,8 +200,20 @@ void Pass2(SymbolList table, char filename[32])
         }
 
         // Below adds t Records
-        sprintf(CodeAdd, "%s%.4x", Instruction(opcode), address); // Calculates code is to be added
-        // printf("%s\n%s\n", CodeAdd,line);
+        if (IsDirective(opcode) != 0)
+        {
+            sprintf(CodeAdd, "%s%.4x", Instruction(opcode), address); // Calculates code is to be added
+            if (strstr(CodeAdd, "!!!!missread!!!!"))
+            {
+                memset(CodeAdd, '\0', sizeof(CodeAdd));
+                continue;
+            }
+            // printf("%s\n%s\n", CodeAdd,line);
+        }
+        else
+        {
+            continue;
+        }
 
         // For the very first one
         if (strlen(Code) == 0)
@@ -212,12 +224,12 @@ void Pass2(SymbolList table, char filename[32])
         }
 
         if (strlen(Code) + strlen(CodeAdd) < 60)
-        {                                           // If code length is less than 60 would add to the code
-            strcat(Code, CodeAdd);                  // Adds to code base
-            memset(CodeAdd, '\0', sizeof(CodeAdd)); // Clears CodeAdd
+        { // If code length is less than 60 would add to the code
+            strcat(Code, CodeAdd);                            // Adds to code base
+            memset(CodeAdd, '\0', sizeof(CodeAdd));           // Clears CodeAdd
         }
         else
-        {                                                // If longer than 60 would insert to the T record list and create a new one
+        { // If longer than 60 would insert to the T record list and create a new one
             Length = strlen(Code) / 2;                   // Calculates the length
             InsertTRecord(&rtable, Start, Length, Code); // Insters to tRecord List
             memset(Code, '\0', sizeof(Code));            // Clears Code

@@ -3,6 +3,8 @@
         "headers.h": "c",
         "ctype.h": "c",
         "string.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "inserttrecord": "cpp",
+        "stdlib.h": "c"
     }
 }

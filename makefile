@@ -1,5 +1,5 @@
-project2: p2.o PrintSymbolTable.o InsertSymbol.o IsInSymbolTable.o
-		gcc -o project2 p2.o PrintSymbolTable.o InsertSymbol.o IsInSymbolTable.o
+project2: p2.o PrintSymbolTable.o InsertSymbol.o IsInSymbolTable.o Pass1.o Pass2.o InsertTRecord.o InsertMRecord.o Instruction.o GenerateObjectFile.o DeleteList.o IsDirective.o
+		gcc -o project2 p2.o PrintSymbolTable.o InsertSymbol.o IsInSymbolTable.o Pass1.o Pass2.o InsertTRecord.o InsertMRecord.o Instruction.o GenerateObjectFile.o DeleteList.o IsDirective.o
 
 p2.o: p2.c headers.h
 		gcc -c -g -Wall p2.c
@@ -13,5 +13,26 @@ InsertSymbol.o: InsertSymbol.c headers.h
 IsInSymbolTable.o: IsInSymbolTable.c headers.h
 		gcc -c -g -Wall IsInSymbolTable.c
 
-DeleteList.o: DeleteList.c headers.c
+Pass1.o: Pass1.c headers.h
+		gcc -c -g -Wall Pass1.c
+
+Pass2.o: Pass2.c headers.h
+		gcc -c -g -Wall Pass2.c
+
+InsertTRecord.o: InsertTRecord.c headers.h
+		gcc -c -g -Wall InsertTRecord.c
+
+InsertMRecord.o: InsertMRecord.c headers.h
+		gcc -c -g -Wall InsertMRecord.c
+
+Instruction.o: Instruction.c headers.h
+		gcc -c -g -Wall Instruction.c
+
+GenerateObjectFile.o: GenerateObjectFile.c headers.h
+		gcc -c -g -Wall GenerateObjectFile.c
+
+DeleteList.o: DeleteList.c headers.h
 		gcc -c -g -Wall DeleteList.c
+
+IsDirective.o: IsDirective.c headers.h
+		gcc -c -g -Wall IsDirective.c

@@ -1,58 +1,38 @@
-# Project 2
+# Project 3
 
-Due Oct 21, 2024 at 2359 EST.
+Due November 8, 2024, at 11:30PM EST
+ 
+Greetings!
+
+On behalf of the entire team, I would like to welcome you to SIC SOLutions, Inc! There were a lot of applicants for the systems programmer job, but in the end, we hired you because you passed Mr. Piersall's System Software course. 
+
+Under normal circumstances, we provide our new hires time to learn about our products and gain organizational know-how. Unfortunately, we just signed a big contract with a tight deadline and need you to deliver a device driver for our newest customer.  We know you are up to the challenge!
+
+We just signed a contract with the Burnt-to-a-crisp oven company.  They make simple-to-use ovens for the consumer products market.  They have awarded us the contract to provide an embedded controller, based on the SIC machine, for 10,000 of their ovens. We already have teams working on the SIC programs to monitor the temperature and modes of the oven.  We need a SIC program that implements a time display on the oven's LCD. Unfortunately, Burnt-to-a-crisp does not have the on-staff engineering task to complete this (they all failed Mr. Piersall's system software course). Burnt-to-a-crisp is depending on us, and we are depending on you.
+
+To further complicate matters, Burnt-to-a-crisp already purchased 10,000 timer circuits and wants the circuits hard-wired to the SIC. (They signed a contract with the supplier so the devices cannot be returned). Ouch! So here are your constraints:
 
  
-You will implement, using C, pass 2 of an assembler for the machine architecture described in the SIC System Programmer's guide provided as reference for this course.  Your project will accept 1 command-line argument, which is a file that contains a SIC assembler program. Project 2 will create and output an object file in the format described in the SIC Object File Format document. 
 
-Remember that to generate SIC object code, we must make two passes through the assembly file. Pass one generates the symbol table and pass two uses the symbol table and op codes to generate the object file.   
+1. The timer circuit is hardwired to the SIC system's last word of addressable memory. The timer counts the number of seconds that have elapsed since midnight and places that value in the last word of addressable memory.  The timer is a self-contained circuit that automatically resets itself at midnight.  If the consumer changes the time on the clock, the timer circuit changes its output. Your program does not need to do that or worry about the mechanics of the time changes. Your program needs to output the correct time of day based on the value in the last word of memory.
 
-There are some validation checks which should be done during pass two (checks which really cannot be done during pass one). You should carefully consider the errors in the SIC assembly file input that can and should be discovered during pass two and when encountered in the source file,  generate an appropriate error message and stop the assembly process. There are additional errors that pass two should be able to detect and report (all of which should HALT the assembly process and generate an error message) which could not be checked during pass 1. 
+2. The consumer has the option of having the clock display in a 12-hour or 24-hour format. If the user wants to see the 24-hour format, the timer circuit sets the most significant BIT in the last word of addressable memory to 1. For the 12-hour format, the bit is set to zero.
 
-For example: if an error is found with the input assembly file, you should stop the process of creating the symbol table and output the following:
+3. Our engineers have already written a "monitor" program that calls all the different routines needed for the oven to operate correctly. The monitor program will call your program at regular intervals to ensure the time displayed on the oven is correct. 
 
-### Assembly error format:
+4. The oven's LCD panel is hardwired to device number 64 on the SIC. The display is configured to display the characters from the ASCII bytes it receives. 
 
-(The contents of the source line of assembly which contains the error>(CrLf>
+If it is 1:16PM, your program should write the following to the display device:
 
-Line (line #> (Description of Error Encountered>(CrLf>
+24 hour time:   1316  IE:  HHMM    where HH is the hour and MM is the minute
 
-If the SIC assembly file is valid, then Project 2 should create and write the appropriate object file
+12 hour time:   0116P  IE: HHMMT where HH is the two-digit hour, MM is two-digit minute and T is P - PM A - AM
 
-----------------------------------------------------------------------------------------------------------------------
+5. Our engineers are still working on their monitor program, and are confident that you can use the last 256 bytes of memory. If you can write the program (and have it produce correct results) using less memory we will award you a bonus (extra points on the assignment)
 
-### Grading:
-I will build your project by typing make.  I will then run your project by typing project2 (filename>
+ 
+We need two files from you on this.
 
-where (filename> is the name of a SIC assembler source code file.
+1. The sic program. Please call it CLOCK, and place it in a file called clock.sic. We know this could be easier with the XE version, but using the XE is cost-prohibitive to the customer. We have to do this in SIC assembly. 
 
-If assembly is completed with no errors, the object file that is created should be the name of the input file with .obj added to the end of the filename. For example:
-
-project2 test1.sic
-
-If is assembly finishes with no errors should create a file called test1.sic.obj
-
-You should NOT create the.obj file if assembly fails due to an error.
-
-the turnin code for this project is:  System_Software_Project2_Fall2024_MW
-
-You need to shar your .c and makefile and documentation.txt  and turnin the sharfile to me. 
-
-Additionally, I expect you to include a documentation.txt file in your sharfile. Discuss your design choices. What errors in the SIC assembly source are you able to detect?
-
-----------------------------------------------------------------------------------------------------------------------
-
-### Caveats:
-1. If the SIC program assembles correctly, I should see NO output to the screen from pass2. The object file should be created using the naming convention in the project specification.
-
-2. If the SIC program has an error which prevents assembly, the object file should NOT be created. Additionally, I should only see an error message output to the screen with the error that occurred.
-
-3. If the user includes a command-line option of --pass1only, your project 2 should stop after pass 1 and print the symbol table.
-
-References:
-
-1. The SIC System Programmer's Reference
-
-2. The SIC Assembly Language Specification
-
-3. The SIC Object File Format Specification (SCOFF)
+2. A documentation file.  Please tell us how many bytes of memory your program needs and where it needs to load by default (we will need to call it from the monitor). If you needed less than 1k to get this done, great!   Move it closer to the end of addressable memory so we have more space available should the monitor or other programs need it.

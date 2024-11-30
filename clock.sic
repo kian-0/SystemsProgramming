@@ -1,0 +1,49 @@
+CLOCK   START   0000
+ZERO    WORD    0       # Zero Reference
+SECPH   WORD    3600    # Seconds in an hour
+MINIS   WORD    60      # Minutes in second
+TWEL    WORD    12      # Used for 12-Hour form if over will make AMPM = to P
+HOURS   RESW    1       # Number Hours
+MINS    RESW    1       # Number Min
+SECS    RESW    1       # Number Seconds
+A       BYTE    C'A'
+P       BYTE    C'P'    # AM/PM
+FORMAT  RESW    1       # Indicator for 12/24 Format
+TEMP    RESW    1
+MSB     BYTE    X'800000'    # Most Significant Bit mask
+MSBRMV  BYTE    X'7FFFFF'    # Mask Remover   
+TIMER   RD      64      # Data from 64th device
+
+# Calculates Time passed first in 24
+CALC    LDA    TIMER    # Loads time
+        AND    MSB      # Bit-wise AND 
+        STA    FROMAT   # Stores if needs to be 12-hour
+        LDA    TIMER    # Loads Timer back
+        OR     MSBRMV   # Removes MSB
+        STA    SECONDS  # Holds number of seconds  
+        DIV    SECPH    # Divides to get hours
+        STA    HOURS    # Stores hours
+        LDA    HOURS    # Loads number of hours
+        MUL    SECPH    # Calc Remaining seconds
+        STA    TEMP     # Holds amount of used seconds
+        LDA    SECONDS  # Loads Number of seconds
+        SUB    TEMP     # Subtract from total seconds
+        STA    SECONDS  # Store remaining seconds
+        DIV    MINIS    # Divide by 60 to get minutes
+        STA    MINUTES  # Store minutes
+        LDA    FORMAT   # Loads Format Indicator
+        COMP   ZERO     # Compares to Zero
+        JEQ    TWHOUR   # If Zero jumps to TWHOUR
+
+TWHOUR  LDA    HOURS    # Loads number of hours
+        COMP   TWEL     # Compares to Zero
+        JLT    AM       # If <12 
+        JGT    PM       # If >12
+
+AM      LDA    HOURS
+        BYTE   C'A'
+        STA    
+
+PM      LDA    HOURS
+
+RSUB

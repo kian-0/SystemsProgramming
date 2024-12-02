@@ -113,8 +113,7 @@ SymbolList Pass1(char filename[32])
             {
                 char indicator;
                 char hex[32];
-                char temp[32];
-                memset(temp, '\0', sizeof(temp));
+                numByte = 0;
                 memset(hex, '\0', sizeof(hex));
                 sscanf(operand, "%c%s", &indicator, hex);
                 switch (indicator)
@@ -129,12 +128,12 @@ SymbolList Pass1(char filename[32])
                         else if (hex[i] >= 48 && hex[i] <= 57)
                         {
                             // printf("Detected number %c at %d\n", hex[i], i);
-                            temp[strlen(temp)] = hex[i];
+                            ++numByte;
                         }
                         else if (hex[i] >= 65 && hex[i] <= 70)
                         {
                             // printf("Detected letter %c at %d\n", hex[i], i);
-                            temp[strlen(temp)] = hex[i];
+                            ++numByte;
                         }
                         else
                         {
@@ -142,12 +141,21 @@ SymbolList Pass1(char filename[32])
                             exit(1);
                         }
                     }
-                    // printf("%s\n", temp);
-                    sscanf(temp, "%x", &numByte);
+                    numByte /= 2;
                     break;
 
                 case 'C':
-                    numByte = strlen(hex) - 2;
+                    for (int i = 0; i < strlen(operand); i++)
+                    {
+                        if (operand[i] >= 32 && operand[i] <= 126)
+                        {
+                            // printf("Detected something %c at %d\n", hex[i], i);
+                            ++numByte;
+                        }
+
+                        
+                    }
+                    numByte -= 3;
                     break;
                 }
                 InsertSymbol(&table, symbol, address, lineNum);
@@ -193,6 +201,7 @@ SymbolList Pass1(char filename[32])
         memset(symbol, '\0', sizeof(symbol));
         memset(opcode, '\0', sizeof(opcode));
         memset(operand, '\0', sizeof(operand));
+        numByte = 0;
 
     } // end fgets while loop
     return 0;

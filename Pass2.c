@@ -8,7 +8,7 @@ void Pass2(SymbolList table, char filename[32])
     }
 
     // For T Records Hold values untill code is filled then it sends it to the tRecord list
-    int Start;
+    int Start = 0;
     int Length;
     char Code[60];
     char CodeAdd[60];
@@ -98,10 +98,9 @@ void Pass2(SymbolList table, char filename[32])
             }
             else if (strcmp(opcode, "BYTE") == 0)
             {
-                char indicator;
+                                char indicator;
                 char hex[32];
-                char temp[32];
-                memset(temp, '\0', sizeof(temp));
+                numByte = 0;
                 memset(hex, '\0', sizeof(hex));
                 sscanf(operand, "%c%s", &indicator, hex);
                 switch (indicator)
@@ -116,24 +115,35 @@ void Pass2(SymbolList table, char filename[32])
                         else if (hex[i] >= 48 && hex[i] <= 57)
                         {
                             // printf("Detected number %c at %d\n", hex[i], i);
-                            temp[strlen(temp)] = hex[i];
+                            ++numByte;
                         }
                         else if (hex[i] >= 65 && hex[i] <= 70)
                         {
                             // printf("Detected letter %c at %d\n", hex[i], i);
-                            temp[strlen(temp)] = hex[i];
+                            ++numByte;
                         }
                         else
                         {
                             printf("Line %d Error at BYTE with %c at %d. Stopping\n", lineNum, hex[i], i);
+                            exit(1);
                         }
                     }
-                    // printf("%s\n", temp);
-                    sscanf(temp, "%x", &numByte);
+                    numByte /= 2;
                     break;
-
                 case 'C':
-                    numByte = strlen(hex) - 2;
+                    for (int i = 0; i < strlen(operand); i++)
+                    {
+                        if (operand[i] == 39)
+                        {
+                            // printf("Detected %c at %d\n", hex[i], i);
+                        }
+                        else
+                        {
+                            // printf("Detected something %c at %d\n", hex[i], i);
+                            ++numByte;
+                        }
+    
+                    }
                     break;
                 }
 
@@ -202,7 +212,7 @@ void Pass2(SymbolList table, char filename[32])
         // Below adds t Records
         if (IsDirective(opcode) != 0)
         {
-            sprintf(CodeAdd, "%s%.4x", Instruction(opcode), address); // Calculates code is to be added
+            sprintf(CodeAdd, "%s%.4x", Instruction(opcode), IsInSymbolTable(table, operand)); // Calculates code is to be added
             if (strstr(CodeAdd, "!!!!missread!!!!"))
             {
                 memset(CodeAdd, '\0', sizeof(CodeAdd));
@@ -216,9 +226,9 @@ void Pass2(SymbolList table, char filename[32])
         }
 
         // For the very first one
-        if (strlen(Code) == 0)
+        if (strlen(Code) == 0 && Start == 0)
         {
-            Start = address + 1;                    // Sets starting address
+            Start = address - 3;                    // Sets starting address
             strcat(Code, CodeAdd);                  // Adds to code base
             memset(CodeAdd, '\0', sizeof(CodeAdd)); // Clears CodeAdd
         }
@@ -231,7 +241,7 @@ void Pass2(SymbolList table, char filename[32])
         else
         { // If longer than 60 would insert to the T record list and create a new one
             Length = strlen(Code) / 2;                   // Calculates the length
-            InsertTRecord(&rtable, Start, Length, Code); // Insters to tRecord List
+            InsertTRecord(&rtable, Start, Length, Code); // Insterts to tRecord List
             memset(Code, '\0', sizeof(Code));            // Clears Code
             memset(CodeAdd, '\0', sizeof(CodeAdd));      // Clears CodeAdd
 

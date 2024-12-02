@@ -130,20 +130,17 @@ void Pass2(SymbolList table, char filename[32])
                     }
                     numByte /= 2;
                     break;
+
                 case 'C':
                     for (int i = 0; i < strlen(operand); i++)
                     {
-                        if (operand[i] == 39)
-                        {
-                            // printf("Detected %c at %d\n", hex[i], i);
-                        }
-                        else
+                        if (operand[i] >= 32 && operand[i] <= 126)
                         {
                             // printf("Detected something %c at %d\n", hex[i], i);
                             ++numByte;
-                        }
-    
+                        }                        
                     }
+                    numByte -= 3;
                     break;
                 }
 

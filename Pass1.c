@@ -151,9 +151,7 @@ SymbolList Pass1(char filename[32])
                         {
                             // printf("Detected something %c at %d\n", hex[i], i);
                             ++numByte;
-                        }
-
-                        
+                        }                        
                     }
                     numByte -= 3;
                     break;

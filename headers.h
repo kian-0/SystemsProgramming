@@ -68,6 +68,8 @@ void PrintSymbolTable(SymbolList table);
 
 int IsInSymbolTable(SymbolList table, char Test[7]);
 
+int SymbolAddress(SymbolList table, char Test[7]);
+
 void InsertSymbol(SymbolList *table, char Name[7], int Addr, int LineNum);
 
 void DeleteList(SymbolList table);

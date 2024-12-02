@@ -28,7 +28,11 @@ void Pass2(SymbolList table, char filename[32])
     int lineNum = 0;
     int address = 0;
     int numByte = 0;
-    char r1;
+    char r1; // For bit addressing
+    int x;   // bits in Binary 0 0 0 0
+    // int b;
+    // int p;
+    // int e;
 
     file = fopen(filename, "r");
 
@@ -44,6 +48,11 @@ void Pass2(SymbolList table, char filename[32])
         lineNum++;
 
         // Clears all the arrays in the event the following instructions do not have anything in that position
+        r1 = '\0'; // Clears "register"
+        x = 0;     // Resets mod bits
+        // b = 0;
+        // p = 0;
+        // e = 0;
         memset(symbol, '\0', sizeof(symbol));
         memset(opcode, '\0', sizeof(opcode));
         memset(operand, '\0', sizeof(operand));
@@ -98,7 +107,7 @@ void Pass2(SymbolList table, char filename[32])
             }
             else if (strcmp(opcode, "BYTE") == 0)
             {
-                                char indicator;
+                char indicator;
                 char hex[32];
                 numByte = 0;
                 memset(hex, '\0', sizeof(hex));
@@ -138,7 +147,7 @@ void Pass2(SymbolList table, char filename[32])
                         {
                             // printf("Detected something %c at %d\n", hex[i], i);
                             ++numByte;
-                        }                        
+                        }
                     }
                     numByte -= 3;
                     break;
@@ -163,8 +172,19 @@ void Pass2(SymbolList table, char filename[32])
             else
             { // If there is no special cases/instructions it defaults and assumes it is a regular instruction
 
+                // Checks for # or @ in operand
+                if (operand[0] == 35 || operand[0] == 64)
+                {
+                    r1 = '\0';
+                    char temp[64];
+                    sscanf(operand, "%c%s", &r1, temp);
+                    // printf("%s %c\n", temp, r1); // Debugging
+                    strcpy(operand, temp);
+                }
+                // Checks to see if the symbol is present
                 if (IsDirective(opcode) != 0 && IsInSymbolTable(table, operand) == 0 && strcmp(opcode, "RSUB") != 0)
                 {
+
                     printf("Line %d Symbol %s is not defined. Stopping\n", lineNum, operand);
                     exit(1);
                 }
@@ -189,8 +209,20 @@ void Pass2(SymbolList table, char filename[32])
                 strncpy(operand, temp, (strlen(temp) - strlen(strstr(temp, ",")))); // Copies string back minus ",X"
                 // printf("%s %c\n", operand,r1); //Debugging
                 memset(temp, '\0', sizeof(temp)); // Clears temp
+                x = 1;                            // Turns on X bit
             }
 
+            // Checks for # or @ in operand
+            if (operand[0] == 35 || operand[0] == 64)
+            {
+                r1 = '\0';
+                char temp[64];
+                sscanf(operand, "%c%s", &r1, temp);
+                // printf("%s %c\n", temp, r1); // Debugging
+                strcpy(operand, temp);
+            }
+
+            // Checks to see if the symbol is present
             if (IsDirective(opcode) != 0 && IsInSymbolTable(table, operand) == 0 && strcmp(opcode, "RSUB") != 0)
             {
                 printf("Line %d Symbol %s is not defined. Stopping\n", lineNum, operand);
@@ -209,12 +241,42 @@ void Pass2(SymbolList table, char filename[32])
         // Below adds t Records
         if (IsDirective(opcode) != 0)
         {
-            sprintf(CodeAdd, "%s%.4x", Instruction(opcode), IsInSymbolTable(table, operand)); // Calculates code is to be added
-            if (strstr(CodeAdd, "!!!!missread!!!!"))
+            int temp = strtol(Instruction(opcode), '\0', 16);
+            // Checks to see if it has a flag # or @
+            if (r1 == '#')
             {
-                memset(CodeAdd, '\0', sizeof(CodeAdd));
-                continue;
+                temp += 1;
+                // printf("%d %s\n", temp, opcode);
+                sprintf(CodeAdd, "%.2x%.4x", temp, SymbolAddress(table, operand)); // Calculates code is to be added
             }
+            else if (r1 == '@')
+            {
+                temp += 2;
+                // printf("%d %s\n", temp, opcode);
+                sprintf(CodeAdd, "%.2x%.4x", temp, SymbolAddress(table, operand)); // Calculates code is to be added
+            }
+            else if (x != 0)
+            {   // THIS IS SUPPOSED TO BE TEMPORARY If the x register is marked it execute this
+                // it was temporary as need a way to catch SYMBOL,X to see if it work
+                // Need to make a way instead add the xbpe bits
+                sprintf(CodeAdd, "%.2x%.1x%.3x", temp, 8, 3);
+            }
+            else if (strcmp(opcode, "RSUB") == 0)
+            {              // RSUB returns to Linkage Register L which is 0?
+                temp += 3; // The n and i bits are on on RSUB
+                // printf("%d %s\n", temp, opcode);
+                sprintf(CodeAdd, "%.2x%.4x", temp, 0);
+            }
+            else
+            {
+                sprintf(CodeAdd, "%s%.4x", Instruction(opcode), SymbolAddress(table, operand)); // Calculates code is to be added
+                if (strstr(CodeAdd, "!!!!missread!!!!"))
+                {
+                    memset(CodeAdd, '\0', sizeof(CodeAdd));
+                    continue;
+                }
+            }
+
             // printf("%s\n%s\n", CodeAdd,line);
         }
         else
@@ -230,13 +292,15 @@ void Pass2(SymbolList table, char filename[32])
             memset(CodeAdd, '\0', sizeof(CodeAdd)); // Clears CodeAdd
         }
 
+        // printf("%s %s\n", CodeAdd, Code);
         if (strlen(Code) + strlen(CodeAdd) < 60)
-        { // If code length is less than 60 would add to the code
-            strcat(Code, CodeAdd);                            // Adds to code base
-            memset(CodeAdd, '\0', sizeof(CodeAdd));           // Clears CodeAdd
+        {                                           // If code length is less than 60 would add to the code
+            strcat(Code, CodeAdd);                  // Adds to code base
+            memset(CodeAdd, '\0', sizeof(CodeAdd)); // Clears CodeAdd
         }
         else
         { // If longer than 60 would insert to the T record list and create a new one
+            // printf("%ld Else Block\n", strlen(Code));
             Length = strlen(Code) / 2;                   // Calculates the length
             InsertTRecord(&rtable, Start, Length, Code); // Insterts to tRecord List
             memset(Code, '\0', sizeof(Code));            // Clears Code

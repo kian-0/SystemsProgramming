@@ -73,8 +73,27 @@ void Pass2(SymbolList table, char filename[32])
             sscanf(line, "%s %s %s", symbol, opcode, operand);
             // printf("Symbol:%s\nOpcode:%s\nOperand:%s\nLine:%d\n\n", symbol, opcode, operand, lineNum);
 
+            // Checks for + in opcode
+            // + Changes type from 3 to 4
+            if (opcode[0] == 43)
+            {
+                r1 = '\0';
+                char temp[64];
+                sscanf(opcode, "%c%s", &r1, temp);
+                // printf("%s %c\n", temp, r1); // Debugging
+                strcpy(opcode, temp);
+            }
+
             // Creates the mRecords (INCORRECTLY) it hard codes the length,flag, and where its being modified
-            if (IsInSymbolTable(table, operand))
+            // if (IsInSymbolTable(table, operand))
+            // {
+            //     // printf("Is in symbol table\n");
+            //     sscanf(CodeAdd, "%x", &address);
+            //     InsertMRecord(&mtable, address, strlen(CodeAdd), '+', startSym);
+            //     memset(CodeAdd, '\0', sizeof(CodeAdd));
+            // } This does not work for SIC/XE
+
+            if (r1 == '+')
             {
                 // printf("Is in symbol table\n");
                 sscanf(CodeAdd, "%x", &address);
@@ -222,6 +241,17 @@ void Pass2(SymbolList table, char filename[32])
                 strcpy(operand, temp);
             }
 
+            // Checks for + in opcode
+            // + Changes type from 3 to 4
+            if (opcode[0] == 43)
+            {
+                r1 = '\0';
+                char temp[64];
+                sscanf(opcode, "%c%s", &r1, temp);
+                // printf("%s %c\n", temp, r1); // Debugging
+                strcpy(opcode, temp);
+            }
+
             // Checks to see if the symbol is present
             if (IsDirective(opcode) != 0 && IsInSymbolTable(table, operand) == 0 && strcmp(opcode, "RSUB") != 0)
             {
@@ -230,7 +260,7 @@ void Pass2(SymbolList table, char filename[32])
             }
 
             // Creates the mRecords (INCORRECTLY) it hard codes the length,flag, and where its being modified
-            if (IsInSymbolTable(table, operand))
+            if (r1 == '+')
             {
                 // printf("Is in symbol table\n");
                 InsertMRecord(&mtable, address, 4, '+', startSym);
@@ -256,7 +286,7 @@ void Pass2(SymbolList table, char filename[32])
                 sprintf(CodeAdd, "%.2x%.4x", temp, SymbolAddress(table, operand)); // Calculates code is to be added
             }
             else if (x != 0)
-            {   // THIS IS SUPPOSED TO BE TEMPORARY If the x register is marked it execute this
+            { // THIS IS SUPPOSED TO BE TEMPORARY If the x register is marked it execute this
                 // it was temporary as need a way to catch SYMBOL,X to see if it work
                 // Need to make a way instead add the xbpe bits
                 sprintf(CodeAdd, "%.2x%.1x%.3x", temp, 8, 3);

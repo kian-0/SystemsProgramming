@@ -20,6 +20,12 @@ Handles opcode interpretation
 Takes "string" opcode 
 Returns hex representation
 
+Created SymbolAddress() in IsInSymbolTable.calculated
+
+Created a way to read operands with # and @
+
+Created a way to read opcodes witn +
+
 Moved Pass1 to a seperate file:
 This was to make it easier for me to read 
 as well as add the --pass1only option

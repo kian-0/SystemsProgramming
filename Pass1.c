@@ -55,6 +55,7 @@ SymbolList Pass1(char filename[32])
         { // If there is a symbol
             sscanf(line, "%s %s %[^\n]s", symbol, opcode, operand);
             // printf("Symbol:%s\nOpcode:%s\nOperand:%s\n\n", symbol, opcode, operand);
+            // sscanf used instead of strtok for easier string manipulation
 
             // Checks if the symbol is not the same as a directive
             if (strcmp(symbol, "START") == 0 || strcmp(symbol, "END") == 0 || strcmp(symbol, "BYTE") == 0 || strcmp(symbol, "WORD") == 0 || strcmp(symbol, "RESB") == 0 || strcmp(symbol, "RESW") == 0 || strcmp(symbol, "RESR") == 0 || strcmp(symbol, "EXPORTS") == 0)

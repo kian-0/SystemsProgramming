@@ -280,12 +280,14 @@ void Pass2(SymbolList table, char filename[32])
             if (r1 == '#')
 
             {
+                // Flips the first 3 bits to be format 4 for #
                 temp += 1;
                 // printf("%d %s\n", temp, opcode);
                 sprintf(CodeAdd, "%.2x%.4x", temp, SymbolAddress(table, operand)); // Calculates code is to be added
             }
             else if (r1 == '@')
             {
+                // FLips the last 3 bits to be format 4 for @
                 temp += 2;
                 // printf("%d %s\n", temp, opcode);
                 sprintf(CodeAdd, "%.2x%.4x", temp, SymbolAddress(table, operand)); // Calculates code is to be added

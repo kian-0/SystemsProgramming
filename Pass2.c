@@ -127,7 +127,7 @@ void Pass2(SymbolList table, char filename[32])
             }
             else if (strcmp(opcode, "BYTE") == 0)
             {
-                char indicator;
+                                char indicator;
                 char hex[32];
                 numByte = 0;
                 memset(hex, '\0', sizeof(hex));
@@ -167,6 +167,7 @@ void Pass2(SymbolList table, char filename[32])
                         {
                             // printf("Detected something %c at %d\n", hex[i], i);
                             ++numByte;
+
                         }
                     }
                     numByte -= 3;
@@ -255,6 +256,7 @@ void Pass2(SymbolList table, char filename[32])
 
             // Checks to see if the symbol is present
             if (IsDirective(opcode) != 0 && IsInSymbolTable(table, operand) == 0 && strcmp(opcode, "RSUB") != 0)
+
             {
                 printf("Line %d Symbol %s is not defined. Stopping\n", lineNum, operand);
                 exit(1);
@@ -272,9 +274,11 @@ void Pass2(SymbolList table, char filename[32])
         // Below adds t Records
         if (IsDirective(opcode) != 0)
         {
+
             int temp = strtol(Instruction(opcode), '\0', 16);
             // Checks to see if it has a flag # or @
             if (r1 == '#')
+
             {
                 temp += 1;
                 // printf("%d %s\n", temp, opcode);

@@ -1,58 +1,55 @@
-# Project 2
+# Systems Programming
+## Course Description:
+COP 3404
 
-Due Oct 21, 2024 at 2359 EST.
+System Software
 
- 
-You will implement, using C, pass 2 of an assembler for the machine architecture described in the SIC System Programmer's guide provided as reference for this course.  Your project will accept 1 command-line argument, which is a file that contains a SIC assembler program. Project 2 will create and output an object file in the format described in the SIC Object File Format document. 
+Fall 2024
 
-Remember that to generate SIC object code, we must make two passes through the assembly file. Pass one generates the symbol table and pass two uses the symbol table and op codes to generate the object file.   
+MW Section
 
-There are some validation checks which should be done during pass two (checks which really cannot be done during pass one). You should carefully consider the errors in the SIC assembly file input that can and should be discovered during pass two and when encountered in the source file,  generate an appropriate error message and stop the assembly process. There are additional errors that pass two should be able to detect and report (all of which should HALT the assembly process and generate an error message) which could not be checked during pass 1. 
+Instructor: Scott Piersall
 
-For example: if an error is found with the input assembly file, you should stop the process of creating the symbol table and output the following:
+Meeting Time(s): 
 
-### Assembly error format:
+MW 1030-1145 & TR 0925-1040
 
-(The contents of the source line of assembly which contains the error>(CrLf>
+Office Hours TR 1045-1245
 
-Line (line #> (Description of Error Encountered>(CrLf>
+Office: Building 15 Room 3217
 
-If the SIC assembly file is valid, then Project 2 should create and write the appropriate object file
+scott.piersall@unf.edu
 
-----------------------------------------------------------------------------------------------------------------------
+Purpose of This Course:
 
-### Grading:
-I will build your project by typing make.  I will then run your project by typing project2 (filename>
+This is a course in system software. This course is key to understanding the relationship between programs and how their execution is affected among various computer architectures. THIS IS A PROGRAMMING INTENSIVE COURSE. THE PROJECTS WILL TAKE A SIGNIFICANT AMOUNT OF EFFORT ON YOUR PART. I WILL NOT EXTEND PROJECT DUE DATES! PLEASE PLAN ACCORDINGLY.
 
-where (filename> is the name of a SIC assembler source code file.
+As a student, you will demonstrate your mastery of the course material not only via assigned projects but also via one take-home exam. To help you stay current, you will have weekly quizzes in canvas at the end of each week which will cover that week's course material. 
 
-If assembly is completed with no errors, the object file that is created should be the name of the input file with .obj added to the end of the filename. For example:
+# Repository Structure:
+* Project 1: Assembler Pass 1
+* Project 2: Assembler Pass 2
+* Project 3: SIC Clock
+* Project 4: Group Project SIC/XE Assembler
+    * 1. Project4: Brennan
+    * 2. Project4: Marc
+    * 3. Project4Finished
 
-project2 test1.sic
+Projects 1-3 was intended to be a individual project for and by Kian Aliwalas
 
-If is assembly finishes with no errors should create a file called test1.sic.obj
+Project 1 and 2 aimed to emulate the SIC theory of assemblers
 
-You should NOT create the.obj file if assembly fails due to an error.
+Project 3 was to create a clock program utilizing SIC programming
 
-the turnin code for this project is:  System_Software_Project2_Fall2024_MW
+Project 4 was a collaborative effort which had the team pull our individual efforts from projects 1 and 2 to implement XE functionality/recognition in our assembler
 
-You need to shar your .c and makefile and documentation.txt  and turnin the sharfile to me. 
+Project4Brennan/Marc was the final product of Brennan and Marc.
 
-Additionally, I expect you to include a documentation.txt file in your sharfile. Discuss your design choices. What errors in the SIC assembly source are you able to detect?
+Project4Finished was the ending result of the project by the end of the semester
 
-----------------------------------------------------------------------------------------------------------------------
+# Collaborators
+Kian Aliwalas
 
-### Caveats:
-1. If the SIC program assembles correctly, I should see NO output to the screen from pass2. The object file should be created using the naming convention in the project specification.
+Brennan Azer
 
-2. If the SIC program has an error which prevents assembly, the object file should NOT be created. Additionally, I should only see an error message output to the screen with the error that occurred.
-
-3. If the user includes a command-line option of --pass1only, your project 2 should stop after pass 1 and print the symbol table.
-
-References:
-
-1. The SIC System Programmer's Reference
-
-2. The SIC Assembly Language Specification
-
-3. The SIC Object File Format Specification (SCOFF)
+Marc Samillano
